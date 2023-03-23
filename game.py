@@ -128,24 +128,26 @@ def normalMode():
     mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
 
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-    normalModeFont=pygame.font.SysFont(None,int(surface[0]/5))
-    oneText=normalModeFont.render("1",True,(255,255,255))
+    pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4) 
+    normalModeFont2=pygame.font.SysFont(None,int(surface[0]/5))
+    oneText=normalModeFont2.render("1",True,(255,255,255))
     mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
 
-    if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        oneText=normalModeFont.render("1",True,(0,255,255))
-        mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-        if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
-            currentScene="level1"
-
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+200 and y>= surface[1]*0.85-5 and y<= surface[1]*0.85+55):
+    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.85 and y<= surface[1]*0.85+returnText.get_height()):
         returnText=normalModeFont.render("return",True,(255,0,0))
         mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="selectMode"
+
+    if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
+        pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
+        pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
+        oneText=normalModeFont2.render("1",True,(0,255,255))
+        mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+        if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            currentScene="level1"
+
+    
 
 def initlife(x):
     global bosslife,life,userposition,hitPoint
@@ -228,7 +230,7 @@ def level1():
         bossflag=0
 
     if round(time.time(),1) == round(timeout,1):
-        print("___________________")
+        # print("___________________")
         if(distance[1]==0):
             distance=[surface[0]/2-surface[0]/4,5]
         elif(distance[1]==1):
