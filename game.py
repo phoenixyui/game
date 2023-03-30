@@ -159,11 +159,14 @@ def normalMode():
             currentScene="level1"
 
 def initlife(x):
-    global bosslife,life,userposition,hitPoint
+    global bosslife,life,userposition,attTimeout,waittimeout
+    attTimeout=0
+    waittimeout=0
     if x==1:
         bosslife = 100
         life = 3
         userposition=[surface[0]/2-surface[0]/16,surface[1]*0.75,surface[0]/8,surface[1]*0.25]
+        
 
 def level1():
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag
@@ -171,6 +174,7 @@ def level1():
         initlife(1)
         attTimeout=int(time.time())+2
         bossflag=1
+        attType=0
         flag=1
     if bossflag ==0:
         attTimeout=int(time.time())+3
@@ -269,7 +273,7 @@ def level1():
                 flag=0
                 currentScene="normalMode"
         attType=0
-        waittimeout=int(time.time())+1
+        waittimeout=int(time.time())+2
 
     if waittimeout == int(time.time()):
         waittimeout=0
