@@ -158,8 +158,6 @@ def normalMode():
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level1"
 
-    
-
 def initlife(x):
     global bosslife,life,userposition,hitPoint
     if x==1:
@@ -183,6 +181,8 @@ def level1():
     for i in range (0,life):
         lifeImage=pygame.image.load("./image/Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
+    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
     # Text1=level.render(str(bosslife),True,(255,255,255))
