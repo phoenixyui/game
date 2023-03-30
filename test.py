@@ -1,7 +1,19 @@
 import pygame
+from pygame.locals import *
+from pygame.locals import QUIT
+import sys
+import time
+import threading
+import random
+import math
 pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
+secWindows = pygame.surface.Surface((500,500), SRCALPHA, 32)
+gameover=pygame.font.SysFont(None,100)
+gameoverText=gameover.render("YOU DIED",True,(255,0,0))
+secWindows.fill((0,0,0,50))
+secWindows.blit(gameoverText,(100,100))
 
 running = True
 while running:
@@ -10,7 +22,7 @@ while running:
             running = False
 
     screen.fill((255, 255, 255))
-    pygame.draw.polygon(screen, (0, 255, 255), ((25,75),(320,125),(250,375)))
+    screen.blit(secWindows,(0,0))
 
     pygame.display.flip()
 
