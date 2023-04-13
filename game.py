@@ -166,6 +166,9 @@ def initlife(x):
         bosslife = 100
         life = 3
         userposition=[surface[0]/2-surface[0]/16,surface[1]*0.75,surface[0]/8,surface[1]*0.25]
+        ###
+        # 上面的userposition可以刪掉或改成使用者目前位置
+        ###
         
 
 def level1():
