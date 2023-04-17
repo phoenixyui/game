@@ -34,6 +34,8 @@ waittimeout=0
 gameovertimeout=0
 visibility=0
 gflag=0
+timepass=0
+recordtime=0
 
 ## menu interface ##
 def Menu():
@@ -172,7 +174,7 @@ def initlife(x):
         
 
 def level1():
-    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag
+    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
     if flag==0:
         initlife(1)
         attTimeout=int(time.time())+2
@@ -181,9 +183,11 @@ def level1():
         flag=1
     if bossflag ==0:
         attTimeout=int(time.time())+3
+        recordtime=int(time.time())
         attType=random.randint(1,2)
         height=surface[1]
         bossflag=1
+        timepass=0
     mainWindows.fill((90,0,173))
     for i in range (0,life):
         lifeImage=pygame.image.load("./image/Unknown-4.png")
@@ -202,10 +206,13 @@ def level1():
     
     if attTimeout!=int(time.time()) and (not(gflag)):
         
+        timepass=round(time.time(),2)-recordtime
+        if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime
+        print(timepass)
         # secWindows.set_alpha(64)
         secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32)
         if attType==1:
-            height-=surface[1]/180
+            height=surface[1]*(1-timepass/(attTimeout-recordtime))
             pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
             mainWindows.blit(secWindows,(0,height))
             
@@ -219,7 +226,7 @@ def level1():
             
             
         elif attType==2:
-            height-=surface[1]/180
+            height=surface[1]*(1-timepass/(attTimeout-recordtime))
             pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
             mainWindows.blit(secWindows,(surface[0]/2,height))
 
@@ -277,6 +284,8 @@ def level1():
                 currentScene="normalMode"
         attType=0
         waittimeout=int(time.time())+2
+        timepass=0
+
 
     if waittimeout == int(time.time()):
         waittimeout=0
