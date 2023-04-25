@@ -6,7 +6,6 @@ import time
 import threading
 import random
 import math
-
 ## 初始化 ##
 x=0
 y=0
@@ -181,6 +180,7 @@ def level1():
         bossflag=1
         attType=0
         flag=1
+        ##以上是進遊戲後只會做一次的初始化##
     if bossflag ==0:
         attTimeout=int(time.time())+3
         recordtime=int(time.time())
@@ -188,29 +188,28 @@ def level1():
         height=surface[1]
         bossflag=1
         timepass=0
+        ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
         lifeImage=pygame.image.load("./image/Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
+        ##顯示左上角愛心##
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
-    # Text1=level.render(str(bosslife),True,(255,255,255))
-    # mainWindows.blit(Text1,(100,100))
-    # Text2=level.render(str(life),True,(255,255,255))
-    # mainWindows.blit(Text2,(300,100))
+
     if not gflag:
-        pygame.draw.rect(mainWindows,(255,255,255),tuple(userposition))
-    # print(height)
+        pygame.draw.rect(mainWindows,(255,255,255),tuple(userposition)) #遊戲沒結束的話就畫角色
     
-    if attTimeout!=int(time.time()) and (not(gflag)):
+    
+    if attTimeout!=int(time.time()) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
         
-        timepass=round(time.time(),2)-recordtime
-        if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime
-        print(timepass)
-        # secWindows.set_alpha(64)
-        secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32)
+        timepass=round(time.time(),2)-recordtime #計算經過的時間
+        if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
+        
+        secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32) #若需要有半透明 就必須有這行
+        
         if attType==1:
             height=surface[1]*(1-timepass/(attTimeout-recordtime))
             pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
@@ -245,6 +244,7 @@ def level1():
         elif(attType==2):
             if (userposition[0]+surface[0]/8)>surface[0]/2 :
                 life-=1
+        #以上是當角色在攻擊範圍內且倒數結束時的動作
         if life==0:
             gameovertimeout=int(time.time())+8
             visibility=0
@@ -253,6 +253,7 @@ def level1():
             gflag=1
             # currentScene="normalMode"
             return
+            #以上是做死亡動畫的參數初始化
         elif life<=0:
             secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
             
@@ -267,6 +268,7 @@ def level1():
             else:
                 mainWindows.fill((0,0,0))
                 currentScene="normalMode"
+        #以上為死亡動畫    
         if bosslife<0:
             secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
             if gameovertimeout!=int(time.time()):
@@ -282,8 +284,9 @@ def level1():
                 winflag[0]=1
                 flag=0
                 currentScene="normalMode"
+        #以上為勝利動畫
         attType=0
-        waittimeout=int(time.time())+2
+        waittimeout=int(time.time())+2 #攻擊間隔
         timepass=0
 
 
@@ -291,7 +294,7 @@ def level1():
         waittimeout=0
         bossflag=0
 
-    if round(time.time(),1) == round(timeout,1):
+    if round(time.time(),1) == round(timeout,1):#這邊以下都是角色移動
         # print("___________________")
         if(distance[1]==0):
             distance=[surface[0]/2-surface[0]/4,5]
@@ -309,7 +312,7 @@ def level1():
             userposition[0]=surface[0]/2-surface[0]/16
             return
     
-def stop():
+def stop():#我還沒做完（或不想做）
     global currentScene
     mainWindows.fill((0,0,0))
     stopFont=pygame.font.SysFont(None,int(surface[0]/5))
