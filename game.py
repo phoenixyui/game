@@ -21,20 +21,25 @@ currentClick=[0,0,"menu"]
 pygame.init()
 mainWindows=pygame.display.set_mode((surface[0],surface[1]),RESIZABLE,32)
 mainWindows.fill(windows_colors)
+bossposition=[0,0,0,0]
 userposition=[surface[0]/2-surface[0]/16,surface[1]*0.75,surface[0]/8,surface[1]*0.25]
 destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
-distance=[0,5] ## 0 左 1 右 2 上 3 下 4 後
+distance=[0,5,5] ## 0 左 1 右 2 上 3 下 4 後
 clock = pygame.time.Clock()
 timeout=0
 attTimeout=0
 attType=0
+attack=0
 height=0
 waittimeout=0
 gameovertimeout=0
+colortimeout=0
 visibility=0
 gflag=0
 timepass=0
 recordtime=0
+usercolor=(255,255,255)
+bosscolor=(0,0,0)
 
 ## menu interface ##
 def Menu():
@@ -167,7 +172,7 @@ def normalMode():
             bossflag=0
             height=surface[1]
             attType=0
-            distance=[0,5]
+            distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level1"
@@ -218,16 +223,110 @@ def initlife(x):
     elif x==3:
         bosslife = 200
         
+def usermove():
+    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
+    if round(time.time(),1) == round(timeout,1):#這邊以下都是角色移動
+        if(distance[1]==0):
+            distance=[surface[0]/2-surface[0]/4,5,0]
+        elif(distance[1]==1):
+            distance=[0-surface[0]/2+surface[0]/4,5,1]
+        elif(distance[1]==2):
+            distance=[surface[1]*0.15,5,2]
+        destination[0]=surface[0]/2-surface[0]/16
+        destination[1]=surface[1]*0.75
+    
+    if(distance[1]!=5):
+        if(distance[1]==0 or distance[1]==1):
+            userposition[0]+=distance[0]/30
+        if(distance[1]==2):
+            userposition[1]+=distance[0]/30
+    elif(distance[1]==5 ):
+        if(distance[2]==0 or distance[2]==1):
+            userposition[0]+=distance[0]/10
+        elif(distance[2]==2):
+            userposition[1]+=distance[0]/10
         
+        if(int(userposition[0])>=int(destination[0]) and distance[0]>0):
+            userposition[0]=surface[0]/2-surface[0]/16
+            
+        if(int(userposition[0])<=int(destination[0]) and distance[0]<0):
+            userposition[0]=surface[0]/2-surface[0]/16
+            
+        if(int(userposition[1])>=int(destination[1]) and distance[0]>0):
+            userposition[1]=0.75*surface[1]
+def drawAttType(x):
+    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
+    secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32)
+    if x==1:
+        height=surface[1]*(1-timepass/(attTimeout-recordtime))
+        pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
+        mainWindows.blit(secWindows,(0,height))
+            
+        pygame.draw.rect(mainWindows,(255,0,0),(0,0,surface[0]/2,surface[1]),width=1,border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
+        pygame.draw.polygon(mainWindows,(255,0,0),
+            ((surface[0]/4,(surface[1]/2-surface[1]/12)),
+            ((surface[0]/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
+            ((surface[0]/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
+    elif x==2:
+        height=surface[1]*(1-timepass/(attTimeout-recordtime))
+        pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
+        mainWindows.blit(secWindows,(surface[0]/2,height))
+
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2,0,surface[0]/2,surface[1]),width=1,border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
+        pygame.draw.polygon(mainWindows,(255,0,0),
+            ((surface[0]*3/4,(surface[1]/2-surface[1]/12)),
+            ((surface[0]*3/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
+            ((surface[0]*3/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
+def drawUser():
+    global usercolor,bosscolor,attack
+
+    #boss
+         #頭
+    pygame.draw.circle(mainWindows,bosscolor,(surface[0]/2+userposition[2]/2-surface[0]/16,surface[1]*0.4+userposition[2]/3),userposition[2]/3)
+        #身體
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2+userposition[2]/2-surface[0]/16,surface[1]*0.4+2*userposition[2]/3),(surface[0]/2+userposition[2]/2-surface[0]/16,surface[1]*0.4+4*userposition[2]/3),3)
+        #左腳
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2-surface[0]/16+userposition[2]/2,surface[1]*0.4+4*userposition[2]/3),(surface[0]/2-surface[0]/16+userposition[2]/4,surface[1]*0.4+5.5*userposition[2]/3),3)
+        #右腳
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2+userposition[2]/2-surface[0]/16,surface[1]*0.4+4*userposition[2]/3),(surface[0]/2-surface[0]/16+userposition[2]*3/4,surface[1]*0.4+5.5*userposition[2]/3),3)
+        #左手
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2+userposition[2]/2-surface[0]/16,surface[1]*0.4+userposition[2]),(surface[0]/2-surface[0]/16+userposition[2]/7,surface[1]*0.4+userposition[2]*0.95),3)
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2+userposition[2]/7-surface[0]/16,surface[1]*0.4+userposition[2]*0.95),(surface[0]/2-surface[0]/16+userposition[2]/4,surface[1]*0.4+userposition[2]*0.75),3)
+
+        #右手
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2-surface[0]/16+userposition[2]/2,surface[1]*0.4+userposition[2]),(surface[0]/2-surface[0]/16+userposition[2]*5/6,surface[1]*0.4+userposition[2]*0.85),3)
+    pygame.draw.line(mainWindows,bosscolor,(surface[0]/2-surface[0]/16+userposition[2]*5/6,surface[1]*0.4+userposition[2]*0.85),(surface[0]/2-surface[0]/16+userposition[2]*3/4,surface[1]*0.4+userposition[2]*0.65),3)
+
+    #user
+        #頭
+    pygame.draw.circle(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]/3),userposition[2]/3)
+        #身體
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+2*userposition[2]/3),(userposition[0]+userposition[2]/2,userposition[1]+4*userposition[2]/3),3)
+        #左腳
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+4*userposition[2]/3),(userposition[0]+userposition[2]/4,userposition[1]+5.5*userposition[2]/3),3)
+        #右腳
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+4*userposition[2]/3),(userposition[0]+userposition[2]*3/4,userposition[1]+5.5*userposition[2]/3),3)
+        #左手
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]/7,userposition[1]+userposition[2]*0.95),3)
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/7,userposition[1]+userposition[2]*0.95),(userposition[0]+userposition[2]/4,userposition[1]+userposition[2]*0.75),3)
+       
+        #右手
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*5/6,userposition[1]+userposition[2]*0.85),3)
+    pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]*5/6,userposition[1]+userposition[2]*0.85),(userposition[0]+userposition[2]*3/4,userposition[1]+userposition[2]*0.65),3)
 
 def level1():
-    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,bosscolor
+    global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout
     if flag==0:
         initlife(1)
         attTimeout=int(time.time())+2
         bossflag=1
         attType=0
         flag=1
+        bossposition=userposition
         ##以上是進遊戲後只會做一次的初始化##
     if bossflag ==0:
         attTimeout=int(time.time())+3
@@ -248,54 +347,25 @@ def level1():
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
     if not gflag:
-        pygame.draw.rect(mainWindows,(255,255,255),tuple(userposition)) #遊戲沒結束的話就畫角色
-        pygame.draw.circle(mainWindows,(0,0,0),(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]/3),userposition[2]/3,4)
-        pygame.draw.line(mainWindows,(0,0,0),(userposition[0]+userposition[2]/2,userposition[1]+2*userposition[2]/3),(userposition[0]+userposition[2]/2,userposition[1]+4*userposition[2]/3),4)
-        
-        pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/2-surface[0]/16,surface[1]*0.4,surface[0]/8,surface[1]*0.25))
-    
+        drawUser()
     
     if attTimeout!=int(time.time()) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
         
         timepass=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
-        
-        secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32) #若需要有半透明 就必須有這行
-        
-        if attType==1:
-            height=surface[1]*(1-timepass/(attTimeout-recordtime))
-            pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
-            mainWindows.blit(secWindows,(0,height))
-            
-            pygame.draw.rect(mainWindows,(255,0,0),(0,0,surface[0]/2,surface[1]),width=1,border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
-            pygame.draw.polygon(mainWindows,(255,0,0),
-                ((surface[0]/4,(surface[1]/2-surface[1]/12)),
-                ((surface[0]/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
-                ((surface[0]/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
-            
-            
-        elif attType==2:
-            height=surface[1]*(1-timepass/(attTimeout-recordtime))
-            pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
-            mainWindows.blit(secWindows,(surface[0]/2,height))
-
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2,0,surface[0]/2,surface[1]),width=1,border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
-            pygame.draw.polygon(mainWindows,(255,0,0),
-                ((surface[0]*3/4,(surface[1]/2-surface[1]/12)),
-                ((surface[0]*3/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
-                ((surface[0]*3/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
+        drawAttType(attType)
             
     else:     
         if(attType==1):
             if userposition[0]<surface[0]/2 :
                 life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
         elif(attType==2):
             if (userposition[0]+surface[0]/8)>surface[0]/2 :
                 life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
         #以上是當角色在攻擊範圍內且倒數結束時的動作
         if life==0:
             gameovertimeout=int(time.time())+8
@@ -340,29 +410,18 @@ def level1():
         attType=0
         waittimeout=int(time.time())+2 #攻擊間隔
         timepass=0
-
+    if colortimeout <= round(time.time(),1):
+        usercolor=(255,255,255)
+        bosscolor=(0,0,0)
 
     if waittimeout == int(time.time()):
         waittimeout=0
         bossflag=0
-
-    if round(time.time(),1) == round(timeout,1):#這邊以下都是角色移動
-        # print("___________________")
-        if(distance[1]==0):
-            distance=[surface[0]/2-surface[0]/4,5]
-        elif(distance[1]==1):
-            distance=[0-surface[0]/2+surface[0]/4,5]
-        destination[0]=surface[0]/2-surface[0]/16
-    if(distance[1]!=5):
-        userposition[0]+=distance[0]/30
-    elif(distance[1]==5 ):
-        userposition[0]+=distance[0]/10
-        if(int(userposition[0])>=int(destination[0]) and distance[0]>0):
-            userposition[0]=surface[0]/2-surface[0]/16
-            return
-        elif(int(userposition[0])<=int(destination[0]) and distance[0]<0):
-            userposition[0]=surface[0]/2-surface[0]/16
-            return
+    #print(userposition[1],destination[1],distance)
+    usermove()
+            
+            
+        
     
 def stop():#我還沒做完（或不想做）
     global currentScene
@@ -520,6 +579,7 @@ def level2():
         elif(int(userposition[0])<=int(destination[0]) and distance[0]<0):
             userposition[0]=surface[0]/2-surface[0]/16
             return
+
 def level3():
     return
 ## use "currentScene" variaty to change the interface ##        
@@ -558,9 +618,16 @@ while True:
                 # print(x,y)
         
         if event.type == pygame.KEYDOWN and currentScene == "level1":
-            if event.key ==pygame.K_z or event.key ==pygame.K_x:
+            if event.key ==pygame.K_z:
                 bosslife-=5
- 
+                bosscolor=(255,0,0)
+                attack=1
+                colortimeout=int(time.time())+0.5
+            if event.key ==pygame.K_x:
+                bosslife-=5
+                bosscolor=(255,0,0)
+                attack=2
+                colortimeout=int(time.time())+0.5
             if event.key ==pygame.K_SPACE:
                 life-=1
                 if life<=0:
@@ -568,15 +635,18 @@ while True:
                     currentScene="normalMode"
             if event.key == pygame.K_LEFT :
                 destination[0]=surface[0]/4-surface[0]/16
-                distance=[destination[0]-userposition[0],0]
+                distance=[destination[0]-userposition[0],0,0]
                 timeout=time.time()+0.5
             if event.key == pygame.K_RIGHT :
                 destination[0]=3*surface[0]/4-surface[0]/16
-                distance=[destination[0]-userposition[0],1]
+                distance=[destination[0]-userposition[0],1,1]
+                timeout=time.time()+0.5
+            if event.key == pygame.K_UP:
+                destination[1]=0.6*surface[1]
+                distance=[destination[1]-userposition[1],2,2]
                 timeout=time.time()+0.5
             if event.key == pygame.K_q:
-
-                currentScene="stop"
+                life+=1
         
         if event.type == pygame.KEYDOWN and currentScene == "stop":
             if event.key == pygame.K_ESCAPE:
