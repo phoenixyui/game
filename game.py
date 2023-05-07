@@ -42,6 +42,8 @@ usercolor=(255,255,255)
 bosscolor=(0,0,0)
 useraction=0 
 actiontimeout=0
+leftPunch=pygame.image.load("image/punch_left-1.jpg")
+rightPunch=pygame.image.load("image/punch_right-1.jpg")
 ## menu interface ##
 def Menu():
     global currentScene
@@ -188,7 +190,7 @@ def normalMode():
             bossflag=0
             height=surface[1]
             attType=0
-            distance=[0,5]
+            distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level2"
@@ -203,7 +205,7 @@ def normalMode():
             bossflag=0
             height=surface[1]
             attType=0
-            distance=[0,5]
+            distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level3"
@@ -239,12 +241,12 @@ def usermove():
     if(distance[1]!=5):
         if(distance[1]==0 or distance[1]==1):
             userposition[0]+=distance[0]/30
-        if(distance[1]==2):
+        if(distance[1]==2 or distance[1]==3):
             userposition[1]+=distance[0]/30
     elif(distance[1]==5 ):
         if(distance[2]==0 or distance[2]==1):
             userposition[0]+=distance[0]/10
-        elif(distance[2]==2):
+        elif(distance[2]==2 or distance[2]==3):
             userposition[1]+=distance[0]/10
         
         if(int(userposition[0])>=int(destination[0]) and distance[0]>0):
@@ -257,7 +259,7 @@ def usermove():
             userposition[1]=0.75*surface[1]
 def drawAttType(x):
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
-    secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32)
+    secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
     if x==1:
         height=surface[1]*(1-timepass/(attTimeout-recordtime))
         pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
@@ -282,6 +284,32 @@ def drawAttType(x):
             ((surface[0]*3/4,(surface[1]/2-surface[1]/12)),
             ((surface[0]*3/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
             ((surface[0]*3/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
+    elif x==3:
+        height=surface[1]*0.35*(timepass/(attTimeout-recordtime))
+        pygame.draw.rect(secWindows,(200,0,0,50),(0,0.65*surface[1],surface[0],height),border_radius=3)
+        mainWindows.blit(secWindows,(0,0))
+
+        pygame.draw.rect(mainWindows,(255,0,0),(0,surface[1]*0.65,surface[0],surface[1]*0.35),width=1,border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2-surface[0]/160,surface[1]*0.85-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2-surface[0]/160,surface[1]*0.85+surface[1]/20,surface[0]/80,surface[0]/80))
+        pygame.draw.polygon(mainWindows,(255,0,0),
+            ((surface[0]/2,(surface[1]*0.85-surface[1]/12)),
+            ((surface[0]/2-(surface[1]*0.75/6)),(surface[1]*0.85+surface[1]/12)),
+            ((surface[0]/2+(surface[1]*0.75/6)),(surface[1]*0.85+surface[1]/12))),width=5)
+    elif x==4:
+        height=surface[1]*0.85*(timepass/(attTimeout-recordtime))
+        pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0],height),border_radius=3)
+        mainWindows.blit(secWindows,(0,0))
+
+        pygame.draw.rect(mainWindows,(255,0,0),(0,0,surface[0],surface[1]*0.816),width=1,border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2-surface[0]/160,surface[1]*0.408-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2-surface[0]/160,surface[1]*0.408+surface[1]/20,surface[0]/80,surface[0]/80))
+        pygame.draw.polygon(mainWindows,(255,0,0),
+            ((surface[0]/2,(surface[1]*0.408-surface[1]/12)),
+            ((surface[0]/2-(surface[1]*0.75/6)),(surface[1]*0.408+surface[1]/12)),
+            ((surface[0]/2+(surface[1]*0.75/6)),(surface[1]*0.408+surface[1]/12))),width=5)
+        
+
 def drawUser(x):
     global usercolor,bosscolor,attack
 
@@ -331,7 +359,8 @@ def drawUser(x):
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*2/5,userposition[1]+userposition[2]*1.1),3)
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]*2/5,userposition[1]+userposition[2]*1.1),(userposition[0]+userposition[2]*2.15/5,userposition[1]+userposition[2]*0.85),3)           
                 #右手
-        pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*3/4,userposition[1]+userposition[2]*0.6),3)
+        pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*3/4,userposition[1]+userposition[2]*0.6),3)  
+        mainWindows.blit(rightPunch,[surface[0]/2+(userposition[0]+userposition[2]/2-surface[0]/3)-rightPunch.get_width(),surface[1]/2]) 
     elif(x==2):
         pygame.draw.circle(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]/3),userposition[2]/3)
             #身體
@@ -345,6 +374,7 @@ def drawUser(x):
                 #右手
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*5/8,userposition[1]+userposition[2]*1.1),3)
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]*5/8,userposition[1]+userposition[2]*1.1),(userposition[0]+userposition[2]*3/4,userposition[1]+userposition[2]*0.85),3)
+        mainWindows.blit(leftPunch,[surface[0]/3,surface[1]/2]) 
 
 def level1():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
@@ -451,8 +481,6 @@ def level1():
     #print(userposition[1],destination[1],distance)
     usermove()
             
-            
-        
     
 def stop():#我還沒做完（或不想做）
     global currentScene
@@ -469,18 +497,23 @@ def stop():#我還沒做完（或不想做）
             currentScene="level1"
     
 def level2():
-    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
+    global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
     if flag==0:
         initlife(2)
         attTimeout=int(time.time())+2
         bossflag=1
         attType=0
         flag=1
+        bossposition=userposition
         ##以上是進遊戲後只會做一次的初始化##
     if bossflag ==0:
-        attTimeout=int(time.time())+3
+        attType=random.randint(1,4)
+        if attType==3 or attType==4:
+            attTimeout=int(time.time())+1.5
+        else:
+            attTimeout=int(time.time())+3
+        
         recordtime=int(time.time())
-        attType=random.randint(1,3)
         height=surface[1]
         bossflag=1
         timepass=0
@@ -496,53 +529,36 @@ def level2():
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
     if not gflag:
-        pygame.draw.rect(mainWindows,(255,255,255),tuple(userposition)) #遊戲沒結束的話就畫角色
-    
-    
-    if attTimeout!=int(time.time()) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
+        drawUser(useraction)
+    #print(userposition)
+    if attTimeout!=round(time.time(),1) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
         
         timepass=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
-        
-        secWindows = pygame.surface.Surface((surface[0]/2,surface[1]), SRCALPHA, 32) #若需要有半透明 就必須有這行
-        
-        if attType==1:
-            height=surface[1]*(1-timepass/(attTimeout-recordtime))
-            pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
-            mainWindows.blit(secWindows,(0,height))
-            
-            pygame.draw.rect(mainWindows,(255,0,0),(0,0,surface[0]/2,surface[1]),width=1,border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
-            pygame.draw.polygon(mainWindows,(255,0,0),
-                ((surface[0]/4,(surface[1]/2-surface[1]/12)),
-                ((surface[0]/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
-                ((surface[0]/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
-            
-            
-        elif attType==2:
-            height=surface[1]*(1-timepass/(attTimeout-recordtime))
-            pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/2,surface[1]),border_radius=3)
-            mainWindows.blit(secWindows,(surface[0]/2,height))
-
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]/2,0,surface[0]/2,surface[1]),width=1,border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2-surface[1]/18,surface[0]/80,surface[1]/12),border_radius=3)
-            pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*3/4-surface[0]/160,surface[1]/2+surface[1]/20,surface[0]/80,surface[0]/80))
-            pygame.draw.polygon(mainWindows,(255,0,0),
-                ((surface[0]*3/4,(surface[1]/2-surface[1]/12)),
-                ((surface[0]*3/4-(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12)),
-                ((surface[0]*3/4+(surface[1]*0.75/6)),(surface[1]/2+surface[1]/12))),width=5)
-        
-       # elif attType==3:
-
+        drawAttType(attType)
             
     else:     
         if(attType==1):
             if userposition[0]<surface[0]/2 :
                 life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
         elif(attType==2):
             if (userposition[0]+surface[0]/8)>surface[0]/2 :
                 life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
+        elif(attType==3):
+            if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
+                life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
+        elif(attType==4):
+            if(userposition[1])<surface[1]*0.816:
+                life-=1
+                usercolor=(255,0,0)
+                colortimeout=int(time.time())+0.5
+
         #以上是當角色在攻擊範圍內且倒數結束時的動作
         if life==0:
             gameovertimeout=int(time.time())+8
@@ -587,29 +603,18 @@ def level2():
         attType=0
         waittimeout=int(time.time())+2 #攻擊間隔
         timepass=0
-
+    if colortimeout <= round(time.time(),1):
+        usercolor=(255,255,255)
+        bosscolor=(0,0,0)
+        
+    if actiontimeout <= int(time.time()):    
+        useraction=0
 
     if waittimeout == int(time.time()):
         waittimeout=0
         bossflag=0
-
-    if round(time.time(),1) == round(timeout,1):#這邊以下都是角色移動
-        # print("___________________")
-        if(distance[1]==0):
-            distance=[surface[0]/2-surface[0]/4,5]
-        elif(distance[1]==1):
-            distance=[0-surface[0]/2+surface[0]/4,5]
-        destination[0]=surface[0]/2-surface[0]/16
-    if(distance[1]!=5):
-        userposition[0]+=distance[0]/30
-    elif(distance[1]==5 ):
-        userposition[0]+=distance[0]/10
-        if(int(userposition[0])>=int(destination[0]) and distance[0]>0):
-            userposition[0]=surface[0]/2-surface[0]/16
-            return
-        elif(int(userposition[0])<=int(destination[0]) and distance[0]<0):
-            userposition[0]=surface[0]/2-surface[0]/16
-            return
+    #print(userposition[1],destination[1],distance)
+    usermove()
 
 def level3():
     return
@@ -648,12 +653,13 @@ while True:
                 currentClick[2]=currentScene
                 # print(x,y)
         
-        if event.type == pygame.KEYDOWN and currentScene == "level1":
+        if event.type == pygame.KEYDOWN and (currentScene == "level1" or currentScene == "level2"):
             if event.key ==pygame.K_z:
                 bosslife-=5
                 bosscolor=(255,0,0)
                 attack=1
                 useraction=2
+                
                 colortimeout=int(time.time())+0.5
                 actiontimeout=int(time.time()+1)
             if event.key ==pygame.K_x:
@@ -678,6 +684,10 @@ while True:
                 timeout=time.time()+0.5
             if event.key == pygame.K_UP:
                 destination[1]=0.6*surface[1]
+                distance=[destination[1]-userposition[1],2,2]
+                timeout=time.time()+0.5
+            if event.key == pygame.K_DOWN:
+                destination[1]=0.9*surface[1]
                 distance=[destination[1]-userposition[1],2,2]
                 timeout=time.time()+0.5
             if event.key == pygame.K_q:
