@@ -2,11 +2,25 @@ import pygame
 from pygame.locals import *
 from pygame.locals import QUIT
 import sys
-import time
 import threading
 import random
+import cv2
+import mediapipe as mp
 import math
+import time
 ## 初始化 ##
+mp_Draw = mp.solutions.drawing_utils # mediapipe 繪圖方法
+mpd_rawing_styles = mp.solutions.drawing_styles # mediapipe 繪圖樣式
+mp_holistic = mp.solutions.holistic # mediapipe 全身偵測方法
+holistic = mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0.5) 
+
+srceen_width = 1280
+srceen_height = 720
+
+pTime = 0
+cTime = 0
+thigh_text = ''
+thigh_flag = 0
 x=0
 y=0
 flag=0
@@ -44,6 +58,7 @@ useraction=0
 actiontimeout=0
 leftPunch=pygame.image.load("image/punch_left-1.jpg")
 rightPunch=pygame.image.load("image/punch_right-1.jpg")
+
 ## menu interface ##
 def Menu():
     global currentScene
@@ -227,7 +242,7 @@ def initlife(x):
         bosslife = 200
         
 def usermove():
-    global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
+    global currentScene,bosslife,life,thigh_flag,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
     if round(time.time(),1) == round(timeout,1):#這邊以下都是角色移動
         if(distance[1]==0):
             distance=[surface[0]/2-surface[0]/4,5,0]
@@ -235,6 +250,7 @@ def usermove():
             distance=[0-surface[0]/2+surface[0]/4,5,1]
         elif(distance[1]==2):
             distance=[surface[1]*0.15,5,2]
+            thigh_flag=0
         destination[0]=surface[0]/2-surface[0]/16
         destination[1]=surface[1]*0.75
     
@@ -242,7 +258,7 @@ def usermove():
         if(distance[1]==0 or distance[1]==1):
             userposition[0]+=distance[0]/30
         if(distance[1]==2 or distance[1]==3):
-            userposition[1]+=distance[0]/30
+            userposition[1]+=distance[0]/5
     elif(distance[1]==5 ):
         if(distance[2]==0 or distance[2]==1):
             userposition[0]+=distance[0]/10
@@ -468,6 +484,9 @@ def level1():
         attType=0
         waittimeout=int(time.time())+2 #攻擊間隔
         timepass=0
+    if colortimeout <= round(time.time(),1):
+        usercolor=(255,255,255)
+        bosscolor=(0,0,0)
         
     if actiontimeout <= int(time.time()):    
         useraction=0
@@ -479,25 +498,9 @@ def level1():
     usermove()
             
     
-def stop():#我還沒做完（或不想做）
-    global currentScene
-    mainWindows.fill((0,0,0))
-    stopFont=pygame.font.SysFont(None,int(surface[0]/5))
-    continueText=stopFont.render("Continue",True,(255,255,255))
-    mainWindows.blit(continueText,(surface[0]/2-(continueText.get_width()/2),surface[1]/4-(continueText.get_height()/2)))
-
-    if(x>=surface[0]/2-(continueText.get_width()/2) and x<=surface[0]/2+continueText.get_width() 
-       and y>=surface[1]/4-(continueText.get_height()/2) and y<=surface[1]/4+continueText.get_height()):
-        continueText=stopFont.render("Continue",True,(255,0,0))
-        mainWindows.blit(continueText,(surface[0]-(continueText.get_width()/2),surface[1]/4-(continueText.get_height()/2)))
-        if event.type == pygame.MOUSEBUTTONUP:
-            currentScene="level1"
     
 def level2():
-    global currentScene,bosslife,bossposition,life,winflag,bossflag,flag
-    global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
-    global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-
+    global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
     if flag==0:
         initlife(2)
         attTimeout=int(time.time())+2
@@ -507,7 +510,7 @@ def level2():
         bossposition=userposition
         ##以上是進遊戲後只會做一次的初始化##
     if bossflag ==0:
-        attType=random.randint(1,4)
+        attType=4
         if attType==3 or attType==4:
             attTimeout=int(time.time())+1.5
         else:
@@ -517,7 +520,6 @@ def level2():
         height=surface[1]
         bossflag=1
         timepass=0
-        usercolor=(255,255,255)
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
@@ -543,23 +545,23 @@ def level2():
             if userposition[0]<surface[0]/2 :
                 life-=1
                 usercolor=(255,0,0)
-                # colortimeout=int(time.time())+0.5
-        if(attType==2):
+                colortimeout=int(time.time())+0.5
+        elif(attType==2):
             if (userposition[0]+surface[0]/8)>surface[0]/2 :
                 life-=1
                 usercolor=(255,0,0)
-                # colortimeout=int(time.time())+0.5
-        if(attType==3):
+                colortimeout=int(time.time())+0.5
+        elif(attType==3):
             if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
                 life-=1
                 usercolor=(255,0,0)
-                # colortimeout=int(time.time())+0.5
-        if(attType==4):
+                colortimeout=int(time.time())+0.5
+        elif(attType==4):
             if(userposition[1])<surface[1]*0.816:
                 life-=1
                 usercolor=(255,0,0)
-                # colortimeout=int(time.time())+0.5
-        print(usercolor)
+                colortimeout=int(time.time())+0.5
+
         #以上是當角色在攻擊範圍內且倒數結束時的動作
         if life==0:
             gameovertimeout=int(time.time())+8
@@ -604,9 +606,11 @@ def level2():
         attType=0
         waittimeout=int(time.time())+2 #攻擊間隔
         timepass=0
-    
+    if colortimeout <= round(time.time(),1):
+        usercolor=(255,255,255)
+        bosscolor=(0,0,0)
         
-    if actiontimeout == int(time.time()):    
+    if actiontimeout <= int(time.time()):    
         useraction=0
 
     if waittimeout == int(time.time()):
@@ -629,90 +633,171 @@ def createScene():
         normalMode()
     if currentScene == "level1":
         level1()
-    if currentScene == "stop":
-        stop()
     if currentScene == "level2":
         level2()
     if currentScene == "level3":
         level3()
+# 根據兩點的座標，計算角度
+def vector_2d_angle(v1, v2):
+    v1_x = v1[0]
+    v1_y = v1[1]
+    v2_x = v2[0]
+    v2_y = v2[1]
+    try:
+        angle_= math.degrees(math.acos((v1_x*v2_x+v1_y*v2_y)/(((v1_x**2+v1_y**2)**0.5)*((v2_x**2+v2_y**2)**0.5))))
+    except:
+        angle_ = 180
+    return angle_
+def thigh_angle(thigh_):
+    angle_list = []
+    # 左腿
+    angle_ = vector_2d_angle(
+        ((int(thigh_[23][0])- int(thigh_[25][0])),(int(thigh_[23][1])-int(thigh_[25][1]))),
+        ((int(thigh_[25][0])- int(thigh_[27][0])),(int(thigh_[25][1])- int(thigh_[27][1])))
+    )
+    angle_list.append(angle_)
+    # 右腿
+    angle_ = vector_2d_angle(
+        ((int(thigh_[24][0])- int(thigh_[26][0])),(int(thigh_[24][1])-int(thigh_[26][1]))),
+        ((int(thigh_[26][0])- int(thigh_[28][0])),(int(thigh_[26][1])- int(thigh_[28][1])))
+    )
+    angle_list.append(angle_)
+    return angle_list
+def thigh_pos(thigh_angle):
+    global thigh_flag
+    t1 = thigh_angle[0]
+    t2 = thigh_angle[1]
+    # 雙腳都要大於50
+    if t1 > 50 and t2 > 50:
+        thigh_flag = 1
+        return 'squat down'
+    else: 
+        thigh_flag = 0
+# 顯示FPS
+def showFps(img):
+    global cTime,pTime
+    cTime = time.time()
+    fps = 1/(cTime-pTime)
+    pTime = cTime
+    cv2.putText(img,f"FPS:{int(fps)}",(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3)
 ## main ##
-while True:
-    clock.tick(60)
-    # 迭代整個事件迴圈，若有符合事件則對應處理
-    for event in pygame.event.get():
-        # 當使用者結束視窗，程式也結束
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONUP:
-                # 取得滑鼠位置
-                x, y = pygame.mouse.get_pos()
-                currentClick[0]=x
-                currentClick[1]=y
-                currentClick[2]=currentScene
-                # print(x,y)
-        
-        if event.type == pygame.KEYDOWN and (currentScene == "level1" or currentScene == "level2"):
-            if event.key ==pygame.K_z:
-                bosslife-=5
-                bosscolor=(255,0,0)
-                attack=1
-                useraction=2
-                
-                colortimeout=int(time.time())+0.5
-                actiontimeout=int(time.time()+1)
-            if event.key ==pygame.K_x:
-                bosslife-=5
-                bosscolor=(255,0,0)
-                attack=2
-                useraction=1
-                colortimeout=int(time.time())+0.5
-                actiontimeout=int(time.time()+1)
-            if event.key ==pygame.K_SPACE:
-                life-=1
-                usercolor=(255,0,0)
-                colortimeout=int(time.time())+1.0
-                if life<=0:
-                    flag=0
-                    currentScene="normalMode"
-            if event.key == pygame.K_LEFT :
-                destination[0]=surface[0]/4-surface[0]/16
-                distance=[destination[0]-userposition[0],0,0]
-                timeout=time.time()+0.5
-            if event.key == pygame.K_RIGHT :
-                destination[0]=3*surface[0]/4-surface[0]/16
-                distance=[destination[0]-userposition[0],1,1]
-                timeout=time.time()+0.5
-            if event.key == pygame.K_UP:
-                destination[1]=0.6*surface[1]
-                distance=[destination[1]-userposition[1],2,2]
-                timeout=time.time()+0.5
-            if event.key == pygame.K_DOWN:
-                destination[1]=0.9*surface[1]
-                distance=[destination[1]-userposition[1],2,2]
-                timeout=time.time()+0.5
-            if event.key == pygame.K_q:
-                life+=1
-        
-        if event.type == pygame.KEYDOWN and currentScene == "stop":
-            if event.key == pygame.K_ESCAPE:
-                currentScene="level1"
-        if bosslife==0 and currentScene=="level1":
-            gameovertimeout=int(time.time())+8
-            visibility=0
-            attType=0
-            bosslife-=1
-            gflag=1
-                
+if __name__ == '__main__':
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Cannot open Camera")
+        exit()
+    while True:
+        clock.tick(60)
+        ret,img = cap.read()
+        if not ret:
+            print("Cannot recvive frame")
+            break
+        img = cv2.resize(img,(srceen_width,srceen_height))
+        imgRGB = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        # 使用Holistic模型進行處理
+        holistic_result = holistic.process(imgRGB)
+        # 獲取身體節點的位置
+        body_landmarks = holistic_result.pose_landmarks
+        # 如果有偵測到身體節點
+        if body_landmarks:            
+            mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)            
+            thigh_points = []            
+            # 印出點的數字
+            for i,lm in enumerate(body_landmarks.landmark):
+                if i == 0:
+                    movePoint = [surface[0] - int(lm.x*surface[0]),int(lm.y*surface[1])]
+                xPos = int(lm.x*srceen_width)
+                yPos = int(lm.y*srceen_height)   
+                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)  
+                thigh_points.append((xPos,yPos))
+            if thigh_points:
+                th_angle = thigh_angle(thigh_points)
+                thigh_text = thigh_pos(th_angle)
+                        
+        img = cv2.flip(img,1)
+        cv2.putText(img,thigh_text, (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+            # 顯示FPS
+        showFps(img)
+            # 開啟視窗
+        cv2.imshow('img',img)
+            # 結束條件
+        if cv2.waitKey(1) == ord('q'):
+            break
+        # 迭代整個事件迴圈，若有符合事件則對應處理
+        for event in pygame.event.get():
+            # 當使用者結束視窗，程式也結束
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                    # 取得滑鼠位置
+                    x, y = pygame.mouse.get_pos()
+                    currentClick[0]=x
+                    currentClick[1]=y
+                    currentClick[2]=currentScene
+                    # print(x,y)
             
-    if colortimeout == round(time.time(),1):
-        usercolor=(255,255,255)
-        bosscolor=(0,0,0)
-    ## 隨時更新視窗大小 ##
-    surface[0]=mainWindows.get_width()
-    surface[1]=mainWindows.get_height()
-    ## 隨時取得滑鼠位置 ##
-    x, y = pygame.mouse.get_pos()
-    createScene()
+            if event.type == pygame.KEYDOWN and (currentScene == "level1" or currentScene == "level2"):
+                if event.key ==pygame.K_z:
+                    bosslife-=5
+                    bosscolor=(255,0,0)
+                    attack=1
+                    useraction=2
+                    
+                    colortimeout=int(time.time())+0.5
+                    actiontimeout=int(time.time()+1)
+                if event.key ==pygame.K_x:
+                    bosslife-=5
+                    bosscolor=(255,0,0)
+                    attack=2
+                    useraction=1
+                    colortimeout=int(time.time())+0.5
+                    actiontimeout=int(time.time()+1)
+                if event.key ==pygame.K_SPACE:
+                    life-=1
+                    if life<=0:
+                        flag=0
+                        currentScene="normalMode"
+                if event.key == pygame.K_LEFT :
+                    destination[0]=surface[0]/4-surface[0]/16
+                    distance=[destination[0]-userposition[0],0,0]
+                    timeout=time.time()+0.5
+                if event.key == pygame.K_RIGHT :
+                    destination[0]=3*surface[0]/4-surface[0]/16
+                    distance=[destination[0]-userposition[0],1,1]
+                    timeout=time.time()+0.5
+                if event.key == pygame.K_UP:
+                    destination[1]=0.6*surface[1]
+                    distance=[destination[1]-userposition[1],2,2]
+                    timeout=time.time()+0.5
+                if event.key == pygame.K_DOWN:
+                    destination[1]=0.9*surface[1]
+                    distance=[destination[1]-userposition[1],2,2]
+                    timeout=time.time()+0.5
+                if event.key == pygame.K_q:
+                    life+=1
 
-    pygame.display.update()
+            if bosslife==0 and currentScene=="level1":
+                gameovertimeout=int(time.time())+8
+                visibility=0
+                attType=0
+                bosslife-=1
+                gflag=1
+                
+        #print(thigh_flag)
+        if thigh_flag==1:
+            destination[1]=0.9*surface[1]
+            distance=[destination[1]-userposition[1],2,2]
+            timeout=time.time()+0.5
+            thigh_flag=2
+        #userposition[0] = surface[0]/2-surface[0]/16+hand_x
+        userposition[0] = 0 + movePoint[0]
+        #userposition[1] = surface[1]*0.75
+        ## 隨時更新視窗大小 ##
+        surface[0]=mainWindows.get_width()
+        surface[1]=mainWindows.get_height()
+        ## 隨時取得滑鼠位置 ##
+        x, y = pygame.mouse.get_pos()
+        createScene()
+
+        pygame.display.update()
