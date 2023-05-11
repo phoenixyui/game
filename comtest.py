@@ -21,6 +21,16 @@ pTime = 0
 cTime = 0
 thigh_text = ''
 thigh_flag = 0
+fist_flag = 0
+step_left_flag = 0
+step_right_flag = 0
+left_fight = 0
+right_fight = 0
+left_fight_flag = 0
+right_fight_flag = 0
+hand_left_text = ''
+hand_right_text = ''
+
 x=0
 y=0
 flag=0
@@ -273,6 +283,7 @@ def usermove():
             
         if(int(userposition[1])>=int(destination[1]) and distance[0]>0):
             userposition[1]=0.75*surface[1]
+
 def drawAttType(x):
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
     secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
@@ -411,10 +422,7 @@ def level1():
         timepass=0
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
-    for i in range (0,life):
-        lifeImage=pygame.image.load("./image/Unknown-4.png")
-        mainWindows.blit(lifeImage,[50*i,0])
-        ##顯示左上角愛心##
+    
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
@@ -422,6 +430,10 @@ def level1():
 
     if not gflag:
         drawUser(useraction)
+        for i in range (0,life):
+            lifeImage=pygame.image.load("./image/Unknown-4.png")
+            mainWindows.blit(lifeImage,[50*i,0])
+        ##顯示左上角愛心##
     
     if attTimeout!=int(time.time()) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
         
@@ -466,6 +478,7 @@ def level1():
                 currentScene="normalMode"
         #以上為死亡動畫    
         if bosslife<0:
+            life=99999
             secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
             if gameovertimeout!=int(time.time()):
                 gameoverText=gameover.render("CONGRATULATION",True,(255,255,56))
@@ -495,10 +508,8 @@ def level1():
         waittimeout=0
         bossflag=0
     #print(userposition[1],destination[1],distance)
-    usermove()
-            
-    
-    
+    usermove()   
+
 def level2():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
     if flag==0:
@@ -522,10 +533,7 @@ def level2():
         timepass=0
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
-    for i in range (0,life):
-        lifeImage=pygame.image.load("./image/Unknown-4.png")
-        mainWindows.blit(lifeImage,[50*i,0])
-        ##顯示左上角愛心##
+    
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
@@ -533,6 +541,10 @@ def level2():
 
     if not gflag:
         drawUser(useraction)
+        for i in range (0,life):
+            lifeImage=pygame.image.load("./image/Unknown-4.png")
+            mainWindows.blit(lifeImage,[50*i,0])
+        ##顯示左上角愛心##
     #print(userposition)
     if attTimeout!=round(time.time(),1) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
         
@@ -588,6 +600,7 @@ def level2():
                 currentScene="normalMode"
         #以上為死亡動畫    
         if bosslife<0:
+            life=99999
             secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
             if gameovertimeout!=int(time.time()):
                 gameoverText=gameover.render("CONGRATULATION",True,(255,255,56))
@@ -673,6 +686,133 @@ def thigh_pos(thigh_angle):
         return 'squat down'
     else: 
         thigh_flag = 0
+def vector_2d_angle(v1, v2):
+    v1_x = v1[0]
+    v1_y = v1[1]
+    v2_x = v2[0]
+    v2_y = v2[1]
+    try:
+        angle_= math.degrees(math.acos((v1_x*v2_x+v1_y*v2_y)/(((v1_x**2+v1_y**2)**0.5)*((v2_x**2+v2_y**2)**0.5))))
+    except:
+        angle_ = 180
+    return angle_
+# 根據傳入的 21 個節點座標，得到該手指的角度
+def hand_angle(hand_):
+    angle_list = []
+    # 大拇指角度
+    angle_ = vector_2d_angle(
+        ((int(hand_[0][0])- int(hand_[2][0])),(int(hand_[0][1])-int(hand_[2][1]))),
+        ((int(hand_[3][0])- int(hand_[4][0])),(int(hand_[3][1])- int(hand_[4][1])))
+        )
+    angle_list.append(angle_)
+    # 食指角度
+    angle_ = vector_2d_angle(
+        ((int(hand_[0][0])-int(hand_[6][0])),(int(hand_[0][1])- int(hand_[6][1]))),
+        ((int(hand_[7][0])- int(hand_[8][0])),(int(hand_[7][1])- int(hand_[8][1])))
+        )
+    angle_list.append(angle_)
+    # 中指角度
+    angle_ = vector_2d_angle(
+        ((int(hand_[0][0])- int(hand_[10][0])),(int(hand_[0][1])- int(hand_[10][1]))),
+        ((int(hand_[11][0])- int(hand_[12][0])),(int(hand_[11][1])- int(hand_[12][1])))
+        )
+    angle_list.append(angle_)
+    # 無名指角度
+    angle_ = vector_2d_angle(
+        ((int(hand_[0][0])- int(hand_[14][0])),(int(hand_[0][1])- int(hand_[14][1]))),
+        ((int(hand_[15][0])- int(hand_[16][0])),(int(hand_[15][1])- int(hand_[16][1])))
+        )
+    angle_list.append(angle_)
+    # 小拇指角度
+    angle_ = vector_2d_angle(
+        ((int(hand_[0][0])- int(hand_[18][0])),(int(hand_[0][1])- int(hand_[18][1]))),
+        ((int(hand_[19][0])- int(hand_[20][0])),(int(hand_[19][1])- int(hand_[20][1])))
+        )
+    angle_list.append(angle_)
+    return angle_list
+# 根據手指角度的串列內容，返回對應的手勢
+def hand_pos(finger_angle):
+    global fist_flag
+
+    f1 = finger_angle[0]   # 大拇指角度
+    f2 = finger_angle[1]   # 食指角度
+    f3 = finger_angle[2]   # 中指角度
+    f4 = finger_angle[3]   # 無名指角度
+    f5 = finger_angle[4]   # 小拇指角度
+
+    # 小於 50 表示手指伸直，大於等於 50 表示手指捲縮
+    if f2>=50 and f3>=50 and f4>=50 and f5>=50:
+        fist_flag = 1
+        return 'fist'
+    else:
+        fist_flag = 0
+
+def arm_angle(arm_):
+    angle_list = []
+    # 左手臂
+    angle_ = vector_2d_angle(
+        ((int(arm_[11][0])- int(arm_[13][0])),(int(arm_[11][1])-int(arm_[13][1]))),
+        ((int(arm_[13][0])- int(arm_[15][0])),(int(arm_[13][1])- int(arm_[15][1])))
+    )
+    angle_list.append(angle_)
+    # 右手臂
+    angle_ = vector_2d_angle(
+        ((int(arm_[12][0])- int(arm_[14][0])),(int(arm_[12][1])-int(arm_[14][1]))),
+        ((int(arm_[14][0])- int(arm_[16][0])),(int(arm_[14][1])- int(arm_[16][1])))
+    )
+    angle_list.append(angle_)    
+    return angle_list
+def arm_pos(arm_angle):
+    global arm_left_flag,arm_right_flag
+    text = ['','']
+    left = arm_angle[0]
+    right = ar_angle[1]
+
+    if left >= 160:
+        arm_left_flag = 1
+        text[0] = 'left_arm'
+    else: 
+        arm_left_flag = 0    
+
+    if right >= 160:
+        text[1] = 'right_arm'
+        arm_right_flag = 1
+    else: 
+        arm_right_flag = 0
+    return text
+def armpit_angle(armpit_):
+    angle_list = []
+    # 左腋下
+    angle_ = vector_2d_angle(
+        ((int(armpit_[23][0])- int(armpit_[11][0])),(int(armpit_[23][1])-int(armpit_[11][1]))),
+        ((int(armpit_[11][0])- int(armpit_[13][0])),(int(armpit_[11][1])- int(armpit_[13][1])))
+    )   
+    angle_list.append(angle_)
+    # 右腋下 
+    angle_ = vector_2d_angle(
+        ((int(armpit_[24][0])- int(armpit_[12][0])),(int(armpit_[24][1])-int(armpit_[12][1]))),
+        ((int(armpit_[12][0])- int(armpit_[14][0])),(int(armpit_[12][1])- int(armpit_[14][1])))
+    )   
+    angle_list.append(angle_)
+    return angle_list
+def armpit_pos(armpit_angle):
+    global armpit_left_flag,armpit_right_flag
+    text = ['','']
+    left = armpit_angle[0]
+    right = armpit_angle[1]
+
+    if left >= 150:
+        armpit_left_flag = 1
+        text[0] = 'left_armpit'
+    else:
+        armpit_left_flag = 0
+        
+    if right >= 150:
+        armpit_right_flag = 1
+        text[1] = 'right_armpit'
+    else:
+        armpit_right_flag = 0    
+    return text
 # 顯示FPS
 def showFps(img):
     global cTime,pTime
@@ -701,7 +841,10 @@ if __name__ == '__main__':
         # 如果有偵測到身體節點
         if body_landmarks:            
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)            
-            thigh_points = []            
+            thigh_points = []    
+            arm_points = []
+            armpit_points = []    
+
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 if i == 0:
@@ -710,10 +853,77 @@ if __name__ == '__main__':
                 yPos = int(lm.y*srceen_height)   
                 cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)  
                 thigh_points.append((xPos,yPos))
+                arm_points.append((xPos,yPos))
+                armpit_points.append((xPos,yPos))
             if thigh_points:
                 th_angle = thigh_angle(thigh_points)
                 thigh_text = thigh_pos(th_angle)
-                        
+            if arm_points:
+                ar_angle = arm_angle(arm_points) # 計算手指角度，回傳長度為 5 的串列
+                global arm_text
+                arm_text = arm_pos(ar_angle)            # 取得手勢所回傳的內容
+            if armpit_points:
+                armp_angle = armpit_angle(armpit_points)
+                global armpit_text
+                armpit_text = armpit_pos(armp_angle)
+        
+        left_hand_landmarks = holistic_result.left_hand_landmarks
+        # 如果有偵測到左手節點
+        if left_hand_landmarks:
+            mp_Draw.draw_landmarks(img,holistic_result.left_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
+            left_handF_points = []
+            for i,hand_point in enumerate(left_hand_landmarks.landmark):
+                xPos = int(hand_point.x*srceen_width)
+                yPos = int(hand_point.y*srceen_height)
+                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                left_handF_points.append((xPos,yPos))
+            if left_handF_points:
+                finger_angle = hand_angle(left_handF_points) # 計算手指角度，回傳長度為 5 的串列
+                hand_left_text = hand_pos(finger_angle)            # 取得手勢所回傳的內容
+        right_hand_landmarks = holistic_result.right_hand_landmarks
+        # 如果有偵測的右手節點        
+        if right_hand_landmarks:
+            mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
+            right_handF_points = []
+            for i,hand_point in enumerate(right_hand_landmarks.landmark):
+                xPos = int(hand_point.x*srceen_width)
+                yPos = int(hand_point.y*srceen_height)
+                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                right_handF_points.append((xPos,yPos))
+            if right_handF_points:
+               finger_angle = hand_angle(right_handF_points)
+               hand_right_text = hand_pos(finger_angle)       
+              
+        # 前置動作 如果已經有握拳跟手有收縮        
+        left_fight_flag,right_fight_flag = 0,0 
+        if(fist_flag and arm_left_flag and armpit_left_flag): 
+            step_left_flag = 1 
+        # 揮拳動作
+        if(step_left_flag and fist_flag and not arm_left_flag and not armpit_left_flag):
+            left_fight += 1
+            left_fight_flag = 1
+            step_left_flag = 0
+        # 前置動作 如果已經有握拳跟手有收縮         
+        if(fist_flag and arm_right_flag and armpit_right_flag): 
+            step_right_flag = 1    
+        # 揮拳動作
+        if(step_right_flag and fist_flag and not arm_right_flag and not armpit_right_flag):
+            right_fight += 1 
+            step_right_flag = 0
+            right_fight_flag = 1
+        # 反轉
+        # img = cv2.flip(img,1)
+        cv2.putText(img,hand_left_text, (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
+        cv2.putText(img,arm_text[0], (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,armpit_text[0], (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,str(left_fight_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'punch count: ' + str(left_fight), (30,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        
+        cv2.putText(img,hand_right_text, (1000,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
+        cv2.putText(img,arm_text[1], (1000,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,armpit_text[1], (1000,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,str(right_fight_flag), (1000,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'punch count: ' + str(right_fight), (1000,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字                
         img = cv2.flip(img,1)
         cv2.putText(img,thigh_text, (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
             # 顯示FPS
@@ -790,6 +1000,25 @@ if __name__ == '__main__':
             distance=[destination[1]-userposition[1],2,2]
             timeout=time.time()+0.5
             thigh_flag=2
+        if left_fight_flag ==1:
+            bosslife-=5
+            bosscolor=(255,0,0)
+            attack=1
+            useraction=2
+                    
+            colortimeout=int(time.time())+0.5
+            actiontimeout=int(time.time()+1)
+            left_fight_flag=0
+        if right_fight_flag ==1:
+            bosslife-=5
+            bosscolor=(255,0,0)
+            attack=2
+            useraction=1
+                    
+            colortimeout=int(time.time())+0.5
+            actiontimeout=int(time.time()+1)
+            right_fight_flag=0
+
         #userposition[0] = surface[0]/2-surface[0]/16+hand_x
         userposition[0] = 0 + movePoint[0]
         #userposition[1] = surface[1]*0.75
