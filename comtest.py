@@ -30,6 +30,9 @@ left_fight_flag = 0
 right_fight_flag = 0
 hand_left_text = ''
 hand_right_text = ''
+jumpready_flag = 0
+jump_flag = 0
+jump_text = ''
 
 x=0
 y=0
@@ -813,6 +816,26 @@ def armpit_pos(armpit_angle):
     else:
         armpit_right_flag = 0    
     return text
+#判定跳躍預備動作
+def jump_ready(thigh_angle):
+    global jumpready_flag
+    t1 = thigh_angle[0]
+    t2 = thigh_angle[1]
+    # 雙腳都要大於30
+    if t1 > 30 and t2 > 30:
+        jumpready_flag = 1        
+    else: 
+        jumpready_flag = 0
+#辦定跳躍
+def jump_pos(body_position):
+    global jump_flag
+    leftleg = body_position[31][1]
+    rightleg = body_position[32][1]
+    print(rightleg)
+    if  rightleg<690 and leftleg<690:
+        jump_flag = 1        
+    else :
+        jump_flag = 0
 # 顯示FPS
 def showFps(img):
     global cTime,pTime
@@ -843,7 +866,8 @@ if __name__ == '__main__':
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)            
             thigh_points = []    
             arm_points = []
-            armpit_points = []    
+            armpit_points = []  
+            body_points = []  
 
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
@@ -855,6 +879,12 @@ if __name__ == '__main__':
                 thigh_points.append((xPos,yPos))
                 arm_points.append((xPos,yPos))
                 armpit_points.append((xPos,yPos))
+                body_points.append((xPos,yPos))  
+            if body_points:                
+                th_angle = thigh_angle(body_points)
+                jump_ready(th_angle)            
+            if jumpready_flag == 1:
+                jump_text = jump_pos(body_points)
             if thigh_points:
                 th_angle = thigh_angle(thigh_points)
                 thigh_text = thigh_pos(th_angle)
@@ -1018,7 +1048,11 @@ if __name__ == '__main__':
             colortimeout=int(time.time())+0.5
             actiontimeout=int(time.time()+1)
             right_fight_flag=0
-
+        if jump_flag ==1:
+            destination[1]=0.6*surface[1]
+            distance=[destination[1]-userposition[1],2,2]
+            timeout=time.time()+0.5
+            jump_flag=0
         #userposition[0] = surface[0]/2-surface[0]/16+hand_x
         userposition[0] = 0 + movePoint[0]
         #userposition[1] = surface[1]*0.75

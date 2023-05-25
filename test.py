@@ -15,6 +15,11 @@ mainWindows.fill((255, 255, 255))
 userposition=[surface[0]/2-surface[0]/16,surface[1]*0.75,surface[0]/8,surface[1]*0.25]
 gameover=pygame.font.SysFont(None,100)
 gameoverText=gameover.render("YOU DIED",True,(255,0,0))
+level=["level1","level2","level3","level4"]
+current="level1"
+x=1
+if current in level and x==1:
+    print("yes")
 #secWindows.fill((0,0,0,50))
 #secWindows.blit(gameoverText,(100,100))
 
