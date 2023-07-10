@@ -51,6 +51,11 @@ rightPunch=pygame.image.load("image/punch_right-1.jpg")
 multipleAttackZone=[0,surface[0]/5,2*surface[0]/5,3*surface[0]/5,4*surface[0]/5]
 zone=0
 selected=[]
+action_start=0
+action_end=0
+defence=100
+recover=0
+defencing=0
 ## menu interface ##
 def Menu():
     global currentScene
@@ -156,6 +161,9 @@ def normalMode():
     pygame.draw.rect(mainWindows,(255,255,255),(6*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
     pygame.draw.rect(mainWindows,(0,0,0),(6*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
 
+    pygame.draw.rect(mainWindows,(255,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
+    pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
+
     normalModeFont2=pygame.font.SysFont(None,int(surface[0]/5))
     oneText=normalModeFont2.render("1",True,(255,255,255))
     mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
@@ -165,6 +173,9 @@ def normalMode():
 
     threeText=normalModeFont2.render("3",True,(255,255,255))
     mainWindows.blit(threeText,(6*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+
+    fourText=normalModeFont2.render("4",True,(255,255,255))
+    mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
 
     if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.85 and y<= surface[1]*0.85+returnText.get_height()):
         returnText=normalModeFont.render("return",True,(255,0,0))
@@ -217,6 +228,21 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level3"
+    
+    if(x>=3.5*surface[0]/8 and x<=3.5*surface[0]/8+surface[0]/6 and y>=surface[1]*2/3 and y<=surface[1]*2/3+surface[0]/6):
+        pygame.draw.rect(mainWindows,(0,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
+        pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
+        fourText=normalModeFont2.render("4",True,(0,255,255))
+        mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
+        if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            flag=0
+            bossflag=0
+            height=surface[1]
+            attType=0
+            distance=[0,5,5]
+            gflag=0
+            destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
+            currentScene="level4"
 
 def initlife(x):
     global bosslife,life,userposition,attTimeout,waittimeout
@@ -405,6 +431,14 @@ def drawUser(x):
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]/2,userposition[1]+userposition[2]),(userposition[0]+userposition[2]*5/8,userposition[1]+userposition[2]*1.1),3)
         pygame.draw.line(mainWindows,usercolor,(userposition[0]+userposition[2]*5/8,userposition[1]+userposition[2]*1.1),(userposition[0]+userposition[2]*3/4,userposition[1]+userposition[2]*0.85),3)
         mainWindows.blit(leftPunch,[surface[0]/3,surface[1]/2]) 
+
+def defencefunc():
+    global usercolor,defence,life
+    if(defencing==0):
+        life-=1
+        usercolor=(255,0,0)   
+    else:
+        defence=-1
 
 def level1():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
@@ -888,6 +922,257 @@ def level3():
         bossflag=0
     usermove()
 
+def level4():
+    global currentScene,bosslife,bossposition,life,winflag,bossflag,flag
+    global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
+    global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
+    global action_start,action_end,defence,recover,defencing
+
+    if flag==0:
+        initlife(2)
+        attTimeout=int(time.time())+2
+        attTimeout2=0
+        bossflag=1
+        attType=0
+        flag=1
+        bossposition=userposition
+        ##以上是進遊戲後只會做一次的初始化##
+    if bossflag ==0:
+        attType=random.randint(1,4)
+        if attType==3 or attType==4:
+            attTimeout=int(time.time())+1.5
+        elif attType == 1 or attType == 2:
+            attType=5
+            attTimeout=int(time.time())+3
+            zone=random.randint(1,5)
+            zone=5
+            selected=random.sample(range(0,5),zone)
+            if zone==5:
+                attTimeout2=int(time.time())+4
+        else:
+            attTimeout=int(time.time())+3
+        
+        recordtime=int(time.time())
+        height=surface[1]
+        bossflag=1
+        timepass=0
+        timepass2=0
+        usercolor=(255,255,255)
+        ##以上是每次boss攻擊前需更動的值##
+    mainWindows.fill((90,0,173))
+    for i in range (0,life):
+        lifeImage=pygame.image.load("./image/Unknown-4.png")
+        mainWindows.blit(lifeImage,[50*i,0])
+        ##顯示左上角愛心##
+    pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
+    
+    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
+    gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
+    gameoverText=gameover.render("YOU DIED",True,(255,0,0))
+
+    if action_start==1 and action_end==0 and(recover==0 or recover==2) :
+        defence -=2
+        defencing=1
+        recover=0
+    if defence <=0:
+        recover=1
+        defencing=0
+    if recover==1 or recover==2:
+        defence+=1
+    if defence>=100 and recover==1:
+        recover=0
+        action_start=0
+    if action_start==1 and action_end==1:
+        recover=2
+        defencing=0
+        action_start=action_end=0   
+    if defence >=100:defence=100
+    print(defence,action_start,action_end,recover,defencing)
+    
+
+    if not gflag:
+        drawUser(useraction)
+    #print(userposition)
+    if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5:
+        timepass2=round(time.time(),2)-recordtime #計算經過的時間
+        if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
+        if(attTimeout2!=0):drawAttType2()
+    elif (not(gflag)) and zone==5:
+        if (selected[4]==0):
+            if userposition[0]<surface[0]/5:
+                life-=1
+                usercolor=(255,0,0) 
+        elif (selected[4]==1):
+            if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
+                life-=1
+                usercolor=(255,0,0) 
+        elif (selected[4]==2):
+            if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
+                life-=1
+                usercolor=(255,0,0) 
+        elif (selected[4]==3):
+            if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
+                life-=1
+                usercolor=(255,0,0) 
+        elif (selected[4]==4):
+            if userposition[0]+surface[0]/8>surface[0]*4/5:
+                life-=1
+                usercolor=(255,0,0) 
+        zone=0
+        if life==0:
+            gameovertimeout=int(time.time())+8
+            visibility=0
+            attType=0
+            life-=1
+            gflag=1
+            # currentScene="normalMode"
+            return
+            #以上是做死亡動畫的參數初始化
+        elif life<=0:
+            secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
+            
+            if gameovertimeout != int(time.time()):
+                
+                pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
+                secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
+                mainWindows.blit(secWindows,(0,0))
+                visibility+=1
+                if visibility>=255:
+                    visibility=255
+            else:
+                mainWindows.fill((0,0,0))
+                currentScene="normalMode"
+        #以上為死亡動畫    
+        if bosslife<0:
+            secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
+            if gameovertimeout!=int(time.time()):
+                gameoverText=gameover.render("CONGRATULATION",True,(255,255,56))
+                pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
+                secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
+                mainWindows.blit(secWindows,(0,0))
+                visibility+=1
+                if visibility>=255:
+                    visibility=255
+            else:
+                mainWindows.fill((0,0,0))
+                winflag[0]=1
+                flag=0
+                currentScene="normalMode"
+        #以上為勝利動畫
+        attType=0
+        waittimeout=int(time.time())+1 #攻擊間隔
+        timepass=0
+        timepass2=0
+
+    if attTimeout!=round(time.time(),1) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
+        timepass=round(time.time(),2)-recordtime #計算經過的時間
+        if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
+        drawAttType(attType)
+    else:     
+        if(attType==1):
+            if userposition[0]<surface[0]/2 :
+                defencefunc()
+        if(attType==2):
+            if (userposition[0]+surface[0]/8)>surface[0]/2 :
+                defencefunc()    
+        if(attType==3):
+            if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
+                defencefunc() 
+        if(attType==4):
+            if(userposition[1])<surface[1]*0.816:
+                defencefunc()
+        if(attType==5):
+            if zone!=5:
+                if (0 in selected):
+                    if userposition[0]<surface[0]/5:
+                        defencefunc()
+                if (1 in selected):
+                    if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
+                        defencefunc()
+                if (2 in selected):
+                    if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
+                        defencefunc()
+                if (3 in selected):
+                    if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
+                        defencefunc()
+                if (4 in selected):
+                    if userposition[0]+surface[0]/8>surface[0]*4/5:
+                        defencefunc()
+            else:
+                if(selected[4]==0):
+                    if userposition[0]+surface[0]/8>surface[0]/5:
+                        defencefunc()
+                if(selected[4]==1):
+                    if not( (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5)):
+                        defencefunc()
+                if(selected[4]==2):
+                    if not((userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5)):
+                        defencefunc()
+                if(selected[4]==3):
+                    if not((userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5)):
+                        defencefunc()
+                if(selected[4]==4):
+                    if userposition[0]<surface[0]*4/5:
+                        defencefunc()
+
+
+        #以上是當角色在攻擊範圍內且倒數結束時的動作
+        if life==0:
+            gameovertimeout=int(time.time())+8
+            visibility=0
+            attType=0
+            life-=1
+            gflag=1
+            # currentScene="normalMode"
+            return
+            #以上是做死亡動畫的參數初始化
+        elif life<=0:
+            secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
+            
+            if gameovertimeout != int(time.time()):
+                
+                pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
+                secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
+                mainWindows.blit(secWindows,(0,0))
+                visibility+=1
+                if visibility>=255:
+                    visibility=255
+            else:
+                mainWindows.fill((0,0,0))
+                currentScene="normalMode"
+        #以上為死亡動畫    
+        if bosslife<0:
+            secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
+            if gameovertimeout!=int(time.time()):
+                gameoverText=gameover.render("CONGRATULATION",True,(255,255,56))
+                pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
+                secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
+                mainWindows.blit(secWindows,(0,0))
+                visibility+=1
+                if visibility>=255:
+                    visibility=255
+            else:
+                mainWindows.fill((0,0,0))
+                winflag[0]=1
+                flag=0
+                currentScene="normalMode"
+        #以上為勝利動畫
+        attType=0
+        waittimeout=int(time.time())+2 #攻擊間隔
+        timepass=0
+        timepass2=0
+    
+        
+    if actiontimeout == int(time.time()):    
+        useraction=0
+
+    if waittimeout == int(time.time()):
+        zone=0
+        selected=[]
+        waittimeout=0
+        bossflag=0
+    usermove()
 ## use "currentScene" variaty to change the interface ##        
 def createScene():
     if currentScene == "menu":
@@ -906,6 +1191,8 @@ def createScene():
         level2()
     if currentScene == "level3":
         level3()
+    if currentScene == "level4":
+        level4()
 ## main ##
 while True:
     clock.tick(60)
@@ -968,6 +1255,12 @@ while True:
                 userposition[0]-=50
             if event.key == pygame.K_d :
                 userposition[0]+=50
+            if event.key == pygame.K_f:
+                action_start=1
+            if action_start==1:
+                if event.key == pygame.K_g:
+                    action_end=1
+                # if(defence>0 and action_start==action_end):action_start=action_end=0
         if event.type == pygame.KEYDOWN and currentScene == "stop":
             if event.key == pygame.K_ESCAPE:
                 currentScene="level1"
