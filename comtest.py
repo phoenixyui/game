@@ -471,10 +471,11 @@ def drawUser(x):
         mainWindows.blit(leftPunch,[surface[0]/4,surface[1]/2]) 
 
 def defencefunc():
-    global usercolor,defence,life
+    global usercolor,defence,life,colortimeout
     if(defencing==0):
         life-=1
         usercolor=(255,0,0)   
+        colortimeout=int(time.time())+0.5
     else:
         defence=-1
 
@@ -752,7 +753,7 @@ def level3():
     global hitflag,thigh_effect_time
 
     if flag==0:
-        initlife(2)
+        initlife(3)
         attTimeout=int(time.time())+2
         attTimeout2=0
         bossflag=1
@@ -1152,6 +1153,7 @@ def level4():
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
     global action_start,action_end,defence,recover,defencing
+    global hitflag,thigh_effect_time
 
     if flag==0:
         initlife(2)
@@ -1178,6 +1180,7 @@ def level4():
             attTimeout=int(time.time())+3
         
         recordtime=int(time.time())
+        hitflag=0
         height=surface[1]
         bossflag=1
         timepass=0
@@ -1208,45 +1211,83 @@ def level4():
     if defence>=100 and recover==1:
         recover=0
         action_start=0
-    if action_start==1 and action_end==1:
+    if action_start==1 and action_end==1 and recover!=1:
         recover=2
         defencing=0
         action_start=action_end=0   
     if defence >=100:defence=100
-    print(defence,action_start,action_end,recover,defencing)
+    #print(defence,action_start,action_end,recover,defencing)
     
 
     if not gflag:
         drawUser(useraction)
+        drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
     #print(userposition)
-    if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5:
+    if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
+        hand_left_nodes.clear()
+        hand_right_nodes.clear() 
+        body_nodes.clear() 
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
         if(attTimeout2!=0):drawAttType2()
     elif (not(gflag)) and zone==5:
-        if (selected[4]==0):
-            if userposition[0]<surface[0]/5:
-                life-=1
-                usercolor=(255,0,0) 
-        elif (selected[4]==1):
-            if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
-                life-=1
-                usercolor=(255,0,0) 
-        elif (selected[4]==2):
-            if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
-                life-=1
-                usercolor=(255,0,0) 
-        elif (selected[4]==3):
-            if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
-                life-=1
-                usercolor=(255,0,0) 
-        elif (selected[4]==4):
-            if userposition[0]+surface[0]/8>surface[0]*4/5:
-                life-=1
-                usercolor=(255,0,0) 
+        all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
+        hand_left_nodes.clear()
+        hand_right_nodes.clear() 
+        body_nodes.clear()   
+        if (selected[4]==0 and hitflag==0):
+            for i in range(len(all_nodes)):
+                if all_nodes[i][0]<surface[0]/5 :
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear() 
+            # if userposition[0]<surface[0]/5:
+            #     life-=1
+            #     usercolor=(255,0,0) 
+        elif (selected[4]==1 and hitflag==0):
+            for i in range(len(all_nodes)):
+                if (all_nodes[i][0]<2*surface[0]/5 and all_nodes[i][0]>surface[0]/5):
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+            # if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
+            #     life-=1
+            #     usercolor=(255,0,0) 
+        elif (selected[4]==2 and hitflag==0):
+            for i in range(len(all_nodes)):
+                if (all_nodes[i][0]<3*surface[0]/5 and all_nodes[i][0]>2*surface[0]/5):
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+            # if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
+            #     life-=1
+            #     usercolor=(255,0,0) 
+        elif (selected[4]==3 and hitflag==0):
+            for i in range(len(all_nodes)):
+                if (all_nodes[i][0]<4*surface[0]/5 and all_nodes[i][0]>3*surface[0]/5):
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+            # if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
+            #     life-=1
+            #     usercolor=(255,0,0) 
+        elif (selected[4]==4 and hitflag==0):
+            for i in range(len(all_nodes)):
+                if (all_nodes[i][0]>4*surface[0]/5):
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+            # if userposition[0]+surface[0]/8>surface[0]*4/5:
+            #     life-=1
+            #     usercolor=(255,0,0) 
         zone=0
         if life==0:
-            gameovertimeout=int(time.time())+8
+            gameovertimeout=int(time.time())+5
             visibility=0
             attType=0
             life-=1
@@ -1262,7 +1303,7 @@ def level4():
                 pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
                 secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
                 mainWindows.blit(secWindows,(0,0))
-                visibility+=1
+                visibility+=3
                 if visibility>=255:
                     visibility=255
             else:
@@ -1276,7 +1317,7 @@ def level4():
                 pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
                 secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
                 mainWindows.blit(secWindows,(0,0))
-                visibility+=1
+                visibility+=3
                 if visibility>=255:
                     visibility=255
             else:
@@ -1290,61 +1331,156 @@ def level4():
         timepass=0
         timepass2=0
 
-    if attTimeout!=round(time.time(),1) and (not(gflag)):  #boss攻擊時間未結束 and 遊戲未結束
+    if attTimeout!=round(time.time(),1) and (not(gflag)) :  #boss攻擊時間未結束 and 遊戲未結束
+
+        hand_left_nodes.clear()
+        hand_right_nodes.clear() 
+        body_nodes.clear()
         timepass=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
         drawAttType(attType)
-    else:     
-        if(attType==1):
-            if userposition[0]<surface[0]/2 :
-                defencefunc()
-        if(attType==2):
-            if (userposition[0]+surface[0]/8)>surface[0]/2 :
-                defencefunc()    
-        if(attType==3):
+    else:    
+        all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
+        hand_left_nodes.clear()
+        hand_right_nodes.clear() 
+        body_nodes.clear()    
+        if(attType==1) and hitflag==0:
+            for i in range(len(all_nodes)):
+                if all_nodes[i][0]<surface[0]/2 :
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+        elif(attType==2) and hitflag==0:
+            for i in range(len(all_nodes)):
+                if all_nodes[i][0]>surface[0]/2 :
+                    defencefunc()
+                    hitflag=1
+                    break
+            all_nodes.clear()
+        elif(attType==3) and hitflag==0:
             if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
-                defencefunc() 
-        if(attType==4):
-            if(userposition[1])<surface[1]*0.816:
                 defencefunc()
-        if(attType==5):
+                hitflag=1
+            all_nodes.clear()
+        elif(attType==4) and hitflag==0:
+            if thigh_effect_time<int(time.time()):
+                defencefunc()
+                hitflag=1
+            all_nodes.clear()
+        elif(attType==5) and hitflag==0:
             if zone!=5:
                 if (0 in selected):
-                    if userposition[0]<surface[0]/5:
-                        defencefunc()
+                    for i in range(len(all_nodes)):
+                        if all_nodes[i][0]<surface[0]/5 :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    hitflag=0
+                    all_nodes.clear() 
+                    # if userposition[0]<surface[0]/5:
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
                 if (1 in selected):
-                    if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
-                        defencefunc()
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]<2*surface[0]/5 and all_nodes[i][0]> surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    hitflag=0
+                    all_nodes.clear() 
+                    # if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
                 if (2 in selected):
-                    if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
-                        defencefunc()
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]<3*surface[0]/5 and all_nodes[i][0]> 2*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    hitflag=0
+                    all_nodes.clear() 
+                    # if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
                 if (3 in selected):
-                    if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
-                        defencefunc()
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]<4*surface[0]/5 and all_nodes[i][0]> 3*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    hitflag=0
+                    all_nodes.clear() 
+                    # if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
                 if (4 in selected):
-                    if userposition[0]+surface[0]/8>surface[0]*4/5:
-                        defencefunc()
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]>4*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    hitflag=0
+                    all_nodes.clear() 
+                    # if userposition[0]+surface[0]/8>surface[0]*4/5:
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
             else:
-                if(selected[4]==0):
-                    if userposition[0]+surface[0]/8>surface[0]/5:
-                        defencefunc()
-                if(selected[4]==1):
-                    if not( (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5)):
-                        defencefunc()
-                if(selected[4]==2):
-                    if not((userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5)):
-                        defencefunc()
-                if(selected[4]==3):
-                    if not((userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5)):
-                        defencefunc()
-                if(selected[4]==4):
-                    if userposition[0]<surface[0]*4/5:
-                        defencefunc()
+                if(selected[4]==0 and hitflag==0):
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]>surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    all_nodes.clear() 
+                    # if userposition[0]+surface[0]/8>surface[0]/5:
+                    #     life-=1
+                    #     usercolor=(255,0,0)
+                if(selected[4]==1 and hitflag==0):
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]>2*surface[0]/5 and all_nodes[i][0]<surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    all_nodes.clear() 
+                    # if not( (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5)):
+                    #     life-=1
+                    #     usercolor=(255,0,0) 
+                if(selected[4]==2 and hitflag==0):
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]>3*surface[0]/5 and all_nodes[i][0]<2*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    all_nodes.clear() 
+                    # if not((userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5)):
+                    #     life-=1
+                    #     usercolor=(255,0,0)
+                if(selected[4]==3 and hitflag==0):
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]>4*surface[0]/5 and all_nodes[i][0]<3*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    all_nodes.clear()
+                    # if not((userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5)):
+                    #     life-=1
+                    #     usercolor=(255,0,0)
+                if(selected[4]==4 and hitflag==0):
+                    for i in range(len(all_nodes)):
+                        if (all_nodes[i][0]<4*surface[0]/5) :
+                            defencefunc()
+                            hitflag=1
+                            break
+                    all_nodes.clear() 
+                    # if userposition[0]<surface[0]*4/5:
+                    #     life-=1
+                    #     usercolor=(255,0,0)
 
 
         #以上是當角色在攻擊範圍內且倒數結束時的動作
         if life==0:
-            gameovertimeout=int(time.time())+8
+            gameovertimeout=int(time.time())+5
             visibility=0
             attType=0
             life-=1
@@ -1360,7 +1496,7 @@ def level4():
                 pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
                 secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
                 mainWindows.blit(secWindows,(0,0))
-                visibility+=1
+                visibility+=3
                 if visibility>=255:
                     visibility=255
             else:
@@ -1374,7 +1510,7 @@ def level4():
                 pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
                 secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
                 mainWindows.blit(secWindows,(0,0))
-                visibility+=1
+                visibility+=3
                 if visibility>=255:
                     visibility=255
             else:
@@ -1861,6 +1997,8 @@ if __name__ == '__main__':
             attType=0
             bosslife=-1
             gflag=1
+        if defense_flag==1:action_start=1
+        if defense_flag==0 and action_start==1:action_end=1
         # if jump_flag ==1:
         #     destination[1]=0.6*surface[1]
         #     distance=[destination[1]-userposition[1],2,2]
