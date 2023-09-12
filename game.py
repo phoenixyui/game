@@ -60,29 +60,32 @@ defencing=0
 def Menu():
     global currentScene
     mainWindows.fill((0,0,0))
-    pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
-    menuImage=pygame.image.load("./image/menu.jpg").convert()
-    mainWindows.blit(menuImage,[0,0])
+    ##pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
+    menuImage=pygame.image.load("./image/menu_punch.png").convert()
+    mainWindows.blit(menuImage,[0,50])
     menuFont=pygame.font.SysFont(None,60)
-    startText=menuFont.render("start",True,(0,0,0))
-    mainWindows.blit(startText,((surface[0]-300)/2+100,surface[1]-180))
-    optionalText=menuFont.render("optional",True,(0,0,0))
-    mainWindows.blit(optionalText,((surface[0]-300)/2+80,surface[1]-120))
-    exitText=menuFont.render("exit",True,(0,0,0))
-    mainWindows.blit(exitText,((surface[0]-300)/2+110,surface[1]-60))
+    startText=menuFont.render("start",True,(255,255,255))
+    mainWindows.blit(startText,(surface[0]*3/4-startText.get_width()/2,surface[1]/4-startText.get_height()))
+    optionalText=menuFont.render("introduce",True,(255,255,255))
+    mainWindows.blit(optionalText,(surface[0]*3/4-startText.get_width()/2,surface[1]*2/4-startText.get_height()))
+    exitText=menuFont.render("exit",True,(255,255,255))
+    mainWindows.blit(exitText,(surface[0]*3/4-startText.get_width()/2,surface[1]*3/4-startText.get_height()))
+    mouseImage=pygame.image.load("./image/mouse.png").convert()
+    mainWindows.blit(mouseImage,[x,y])
 
-    if(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200 and y<=surface[1]-200+66):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200,300,66),width=1,border_radius=3)
+
+    if(x>=surface[0]/2 and y>=0 and y<=surface[1]/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/6,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
-            currentScene="selectMode"
+            currentScene="normalMode"
 
-    elif(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200+67 and y<=surface[1]-200+132):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200+67,300,66),width=1,border_radius=3)
+    elif(x>=surface[0]/2 and y>surface[1]/4 and y<=surface[1]*2/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/2-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="optional"
 
-    elif(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200+133 and y<=surface[1]):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200+133,300,66),width=1,border_radius=3)
+    elif(x>=surface[0]/2 and y>surface[1]*2/4 and y<=surface[1]*3/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]*3/4-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
             pygame.quit()
             sys.exit()
@@ -147,7 +150,7 @@ def selectMode():
 def normalMode():
     global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2
     mainWindows.fill((0,0,0))
-    
+
     normalModeFont=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     returnText=normalModeFont.render("return",True,(255,255,255))
     mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
@@ -177,11 +180,13 @@ def normalMode():
     fourText=normalModeFont2.render("4",True,(255,255,255))
     mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
 
+    
+
     if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.85 and y<= surface[1]*0.85+returnText.get_height()):
         returnText=normalModeFont.render("return",True,(255,0,0))
         mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
         if event.type == pygame.MOUSEBUTTONUP:
-            currentScene="selectMode"
+            currentScene="menu"
 
     if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
         pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
@@ -243,6 +248,8 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level4"
+    mouseImage=pygame.image.load("./image/mouse.png").convert()
+    mainWindows.blit(mouseImage,[x,y])
 
 def initlife(x):
     global bosslife,life,userposition,attTimeout,waittimeout

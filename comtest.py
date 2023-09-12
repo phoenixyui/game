@@ -94,6 +94,7 @@ recover=0
 defencing=0
 hitflag=0
 thigh_effect_time=0
+jump_effect_time=0
 
 ## menu interface ##
 def Menu():
@@ -606,7 +607,7 @@ def level1():
 
 def level2():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-    global hitflag,thigh_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time
     if flag==0:
         initlife(2)
         attTimeout=int(time.time())+2
@@ -674,7 +675,7 @@ def level2():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
-            if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
+            if jump_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
                 colortimeout=int(time.time())+0.5
@@ -750,7 +751,7 @@ def level3():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
-    global hitflag,thigh_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time
 
     if flag==0:
         initlife(3)
@@ -948,7 +949,7 @@ def level3():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
-            if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
+            if jump_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
                 colortimeout=int(time.time())+0.5
@@ -1359,7 +1360,7 @@ def level4():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
-            if(userposition[1]+5.5*userposition[2]/3)>surface[1]:
+            if jump_effect_time<int(time.time()):
                 defencefunc()
                 hitflag=1
             all_nodes.clear()
@@ -1999,11 +2000,12 @@ if __name__ == '__main__':
             gflag=1
         if defense_flag==1:action_start=1
         if defense_flag==0 and action_start==1:action_end=1
-        # if jump_flag ==1:
-        #     destination[1]=0.6*surface[1]
-        #     distance=[destination[1]-userposition[1],2,2]
-        #     timeout=time.time()+0.5
-        #     jump_flag=0
+        if jump_flag ==1:
+            destination[1]=0.6*surface[1]
+            distance=[destination[1]-userposition[1],2,2]
+            timeout=time.time()+0.5
+            jump_flag=2
+            jump_effect_time=int(time.time())+1
         #userposition[0] = surface[0]/2-surface[0]/16+hand_x
         userposition[0] = 0 + movePoint[0]
         #userposition[1] = surface[1]*0.75
