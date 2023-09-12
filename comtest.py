@@ -39,6 +39,7 @@ step_left_flag = 0
 step_right_flag = 0
 #####SQUATDOWN#####
 thigh_flag = 0
+jump_flag=0
 ###################################
 pTime = 0
 cTime = 0
@@ -96,7 +97,7 @@ defencing=0
 hitflag=0
 thigh_effect_time=0
 jump_effect_time=0
-user=1  ##1李 2古
+user=2  ##1李 2古
 
 if user==1:
     leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
@@ -111,10 +112,13 @@ def Menu():
     mainWindows.fill((0,0,0))
     #pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
 
-    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu_punch.png").convert()
-    elif user==2:menuImage=pygame.image.load("./image/menu_punch.png").convert()
+    if user==1:
+        menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu_punch.png").convert()
+        mainWindows.blit(menuImage,[0,50])
+    elif user==2:
+        menuImage=pygame.image.load("./image/menu_punch.png").convert()
+        mainWindows.blit(menuImage,[0,50])
 
-    mainWindows.blit(menuImage,[0,50])
     menuFont=pygame.font.SysFont(None,60)
     startText=menuFont.render("start",True,(255,255,255))
     mainWindows.blit(startText,(surface[0]*3/4-startText.get_width()/2,surface[1]/4-startText.get_height()))
@@ -123,10 +127,13 @@ def Menu():
     exitText=menuFont.render("exit",True,(255,255,255))
     mainWindows.blit(exitText,(surface[0]*3/4-startText.get_width()/2,surface[1]*3/4-startText.get_height()))
 
-    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
-    elif user==2:mouseImage=pygame.image.load("./image/mouse.png").convert()
-
-    mainWindows.blit(mouseImage,[x,y])
+    if user==1:
+        mouseImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
+        mainWindows.blit(mouseImage,[x,y])
+    elif user==2:
+        mouseImage=pygame.image.load("./image/mouse.png").convert()
+        mainWindows.blit(mouseImage,[x,y])
+    
 
     if(x>=surface[0]/2 and y>=0 and y<=surface[1]/4):
         pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/6,300,66),width=1,border_radius=3)
@@ -315,7 +322,7 @@ def initlife(x):
     # 上面的userposition可以刪掉或改成使用者目前位置
     ###
     if x==1:
-        bosslife = 10
+        bosslife = 100
     elif x==2:
         bosslife = 150
     elif x==3:
@@ -2025,6 +2032,7 @@ if __name__ == '__main__':
             timeout=time.time()+0.5
             thigh_flag=2
             thigh_effect_time=int(time.time())+1
+
         if punch_left_flag ==1:
             bosslife-=5
             bosscolor=(255,0,0)
@@ -2034,6 +2042,7 @@ if __name__ == '__main__':
             colortimeout=int(time.time())+0.5
             actiontimeout=int(time.time()+1)
             punch_left_flag=0
+
         if punch_right_flag ==1:
             bosslife-=5
             bosscolor=(255,0,0)
@@ -2043,20 +2052,25 @@ if __name__ == '__main__':
             colortimeout=int(time.time())+0.5
             actiontimeout=int(time.time()+1)
             punch_right_flag=0
+
         if bosslife==0 and (currentScene in level):
             gameovertimeout=int(time.time())+5
             visibility=0
             attType=0
             bosslife=-1
             gflag=1
+
         if defense_flag==1:action_start=1
+
         if defense_flag==0 and action_start==1:action_end=1
+
         if jump_flag ==1:
             destination[1]=0.6*surface[1]
             distance=[destination[1]-userposition[1],2,2]
             timeout=time.time()+0.5
             jump_flag=2
             jump_effect_time=int(time.time())+1
+
         #userposition[0] = surface[0]/2-surface[0]/16+hand_x
         userposition[0] = 0 + movePoint[0]
         #userposition[1] = surface[1]*0.75
