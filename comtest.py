@@ -84,8 +84,7 @@ usercolor=(255,255,255)
 bosscolor=(0,0,0)
 useraction=0 
 actiontimeout=0
-leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
-rightPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_right-1.jpg")
+
 multipleAttackZone=[0,surface[0]/5,2*surface[0]/5,3*surface[0]/5,4*surface[0]/5]
 zone=0
 selected=[]
@@ -97,43 +96,60 @@ defencing=0
 hitflag=0
 thigh_effect_time=0
 jump_effect_time=0
+user=1  ##1李 2古
+
+if user==1:
+    leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
+    rightPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_right-1.jpg")
+elif user==2:
+    leftPunch=pygame.image.load("./image/punch_left-1.jpg")
+    rightPunch=pygame.image.load("./image/punch_right-1.jpg")
 
 ## menu interface ##
 def Menu():
-    global currentScene
+    global currentScene,user
     mainWindows.fill((0,0,0))
-    pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
-    menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
-    mainWindows.blit(menuImage,[0,0])
+    #pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
+
+    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu_punch.png").convert()
+    elif user==2:menuImage=pygame.image.load("./image/menu_punch.png").convert()
+
+    mainWindows.blit(menuImage,[0,50])
     menuFont=pygame.font.SysFont(None,60)
-    startText=menuFont.render("start",True,(0,0,0))
-    mainWindows.blit(startText,((surface[0]-300)/2+100,surface[1]-180))
-    optionalText=menuFont.render("optional",True,(0,0,0))
-    mainWindows.blit(optionalText,((surface[0]-300)/2+80,surface[1]-120))
-    exitText=menuFont.render("exit",True,(0,0,0))
-    mainWindows.blit(exitText,((surface[0]-300)/2+110,surface[1]-60))
+    startText=menuFont.render("start",True,(255,255,255))
+    mainWindows.blit(startText,(surface[0]*3/4-startText.get_width()/2,surface[1]/4-startText.get_height()))
+    optionalText=menuFont.render("introduce",True,(255,255,255))
+    mainWindows.blit(optionalText,(surface[0]*3/4-startText.get_width()/2,surface[1]*2/4-startText.get_height()))
+    exitText=menuFont.render("exit",True,(255,255,255))
+    mainWindows.blit(exitText,(surface[0]*3/4-startText.get_width()/2,surface[1]*3/4-startText.get_height()))
 
-    if(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200 and y<=surface[1]-200+66):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200,300,66),width=1,border_radius=3)
+    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
+    elif user==2:mouseImage=pygame.image.load("./image/mouse.png").convert()
+
+    mainWindows.blit(mouseImage,[x,y])
+
+    if(x>=surface[0]/2 and y>=0 and y<=surface[1]/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/6,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
-            currentScene="selectMode"
+            currentScene="normalMode"
 
-    elif(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200+67 and y<=surface[1]-200+132):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200+67,300,66),width=1,border_radius=3)
+    elif(x>=surface[0]/2 and y>surface[1]/4 and y<=surface[1]*2/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/2-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="optional"
 
-    elif(x>=(surface[0]-300)/2 and x<=(surface[0]-300)/2+300 and y>=surface[1]-200+133 and y<=surface[1]):
-        pygame.draw.rect(mainWindows,(255,0,0),((surface[0]-300)/2,surface[1]-200+133,300,66),width=1,border_radius=3)
+    elif(x>=surface[0]/2 and y>surface[1]*2/4 and y<=surface[1]*3/4):
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]*3/4-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
             pygame.quit()
             sys.exit()
 
 ## optional interface ##
 def optional():
-    global currentScene
+    global currentScene,user
     mainWindows.fill((0,0,0))
-    menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
+    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
+    elif user==2:pygame.image.load("./image/menu.jpg").convert()
     mainWindows.blit(menuImage,[0,0])
     opFont=pygame.font.SysFont(None,100)
     returnText=opFont.render("return",True,(0,0,0))
@@ -223,7 +239,7 @@ def normalMode():
         returnText=normalModeFont.render("return",True,(255,0,0))
         mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
         if event.type == pygame.MOUSEBUTTONUP:
-            currentScene="selectMode"
+            currentScene="menu"
 
     if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
         pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
@@ -285,6 +301,9 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level4"
+    if user==1:mouseImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
+    elif user==2:mouseImage=pygame.image.load("./image/mouse.png").convert()
+    mainWindows.blit(mouseImage,[x,y])
 
 def initlife(x):
     global bosslife,life,userposition,attTimeout,waittimeout
@@ -484,7 +503,7 @@ def defencefunc():
 
 def level1():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-    global hitflag
+    global hitflag,user
     if flag==0:
         initlife(1)
         attTimeout=int(time.time())+2
@@ -513,7 +532,8 @@ def level1():
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         for i in range (0,life):
-            lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     
@@ -609,7 +629,7 @@ def level1():
 
 def level2():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-    global hitflag,thigh_effect_time,jump_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time,user
     if flag==0:
         initlife(2)
         attTimeout=int(time.time())+2
@@ -641,7 +661,8 @@ def level2():
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         for i in range (0,life):
-            lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     #print(userposition)
@@ -753,7 +774,7 @@ def level3():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
-    global hitflag,thigh_effect_time,jump_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time,user
 
     if flag==0:
         initlife(3)
@@ -789,7 +810,8 @@ def level3():
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
-        lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+        if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+        elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
@@ -1156,7 +1178,7 @@ def level4():
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
     global action_start,action_end,defence,recover,defencing
-    global hitflag,thigh_effect_time,jump_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time,user
 
     if flag==0:
         initlife(2)
@@ -1192,7 +1214,8 @@ def level4():
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
-        lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+        if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+        elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
