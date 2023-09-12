@@ -8,6 +8,8 @@ import cv2
 import mediapipe as mp
 import math
 import time
+import sys
+import pyautogui
 ## 初始化 ##
 mp_Draw = mp.solutions.drawing_utils # mediapipe 繪圖方法
 mpd_rawing_styles = mp.solutions.drawing_styles # mediapipe 繪圖樣式
@@ -82,8 +84,8 @@ usercolor=(255,255,255)
 bosscolor=(0,0,0)
 useraction=0 
 actiontimeout=0
-leftPunch=pygame.image.load("image/punch_left-1.jpg")
-rightPunch=pygame.image.load("image/punch_right-1.jpg")
+leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
+rightPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_right-1.jpg")
 multipleAttackZone=[0,surface[0]/5,2*surface[0]/5,3*surface[0]/5,4*surface[0]/5]
 zone=0
 selected=[]
@@ -101,7 +103,7 @@ def Menu():
     global currentScene
     mainWindows.fill((0,0,0))
     pygame.draw.rect(mainWindows,(255,255,255),((surface[0]-300)/2,surface[1]-200,300,200))
-    menuImage=pygame.image.load("./image/menu.jpg").convert()
+    menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
     mainWindows.blit(menuImage,[0,0])
     menuFont=pygame.font.SysFont(None,60)
     startText=menuFont.render("start",True,(0,0,0))
@@ -131,7 +133,7 @@ def Menu():
 def optional():
     global currentScene
     mainWindows.fill((0,0,0))
-    menuImage=pygame.image.load("./image/menu.jpg").convert()
+    menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
     mainWindows.blit(menuImage,[0,0])
     opFont=pygame.font.SysFont(None,100)
     returnText=opFont.render("return",True,(0,0,0))
@@ -147,7 +149,7 @@ def optional():
 def selectMode():
     global currentScene,currentClick
     mainWindows.fill((0,0,0))
-    menuImage=pygame.image.load("./image/menu.jpg").convert()
+    menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
     mainWindows.blit(menuImage,[0,0])
     # pygame.draw.rect(mainWindows,(255,255,255),(surface[0]/2-surface[0]/3.5-surface[0]/6,surface[1]*0.3,surface[0]/3.5,surface[1]/10))
     # pygame.draw.rect(mainWindows,(255,255,255),(surface[0]/2+surface[0]/6,surface[1]*0.3,surface[0]/3,surface[1]/10))
@@ -511,7 +513,7 @@ def level1():
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         for i in range (0,life):
-            lifeImage=pygame.image.load("./image/Unknown-4.png")
+            lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     
@@ -639,7 +641,7 @@ def level2():
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         for i in range (0,life):
-            lifeImage=pygame.image.load("./image/Unknown-4.png")
+            lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     #print(userposition)
@@ -787,7 +789,7 @@ def level3():
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
-        lifeImage=pygame.image.load("./image/Unknown-4.png")
+        lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
@@ -1154,7 +1156,7 @@ def level4():
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
     global action_start,action_end,defence,recover,defencing
-    global hitflag,thigh_effect_time
+    global hitflag,thigh_effect_time,jump_effect_time
 
     if flag==0:
         initlife(2)
@@ -1190,7 +1192,7 @@ def level4():
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.fill((90,0,173))
     for i in range (0,life):
-        lifeImage=pygame.image.load("./image/Unknown-4.png")
+        lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
         mainWindows.blit(lifeImage,[50*i,0])
         ##顯示左上角愛心##
     pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
@@ -1627,7 +1629,17 @@ def hand_pos(finger_angle):
         fist_flag = 1
     else:
         fist_flag = 0
-    return fist_flag
+
+    mousecontrol_flag = 0
+    # 小於 50 表示手指伸直，大於等於 50 表示手指捲縮
+    if f3>=50 and f4>=50 and f5>=50: #只有食指伸直，表示移動
+        mousecontrol_flag = 0        
+    elif f4>=50 and f5>=50: #食指跟中指伸直，表示點擊
+        mousecontrol_flag = 1  
+    else:
+        mousecontrol_flag = -1 
+    return fist_flag,mousecontrol_flag
+    
 def arm_angle(arm_):
     angle_list = []
     # 左手臂
@@ -1794,6 +1806,7 @@ if __name__ == '__main__':
     hand_left_nodes = []
     hand_right_nodes = []
     body_nodes = []
+    mousecontrol_break = 0
     while True:
         ret,img = cap.read()
         if not ret:
@@ -1844,19 +1857,27 @@ if __name__ == '__main__':
         # 獲取左手節點
         left_hand_landmarks = holistic_result.left_hand_landmarks
         # 如果有偵測到左手節點
+        mouse_x,mouse_y = 0,0
+        mousecontrol_flag = -1
         if left_hand_landmarks:
             mp_Draw.draw_landmarks(img,holistic_result.left_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
             left_handF_points = []
+            left_handF_mouse_points = []
             for i,hand_point in enumerate(left_hand_landmarks.landmark):
                 xPos = int(hand_point.x*surface[0])
                 yPos = int(hand_point.y*surface[1])
                 cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
-                left_handF_points.append((xPos,yPos))       
+                left_handF_points.append([xPos,yPos])       
                 hand_left_nodes.append([(surface[0] - xPos),(yPos/3)+300])
+                left_handF_mouse_points.append((surface[0] - xPos,yPos))
             if left_handF_points:
-               finger_angle = hand_angle(left_handF_points)
-               fist_left_flag = hand_pos(finger_angle)  
- 
+                mouse_x =  surface[0] - left_handF_points[8][0]
+                mouse_y =  left_handF_points[8][1]
+                finger_angle = hand_angle(left_handF_points)
+                fist_left_flag,mousecontrol_flag = hand_pos(finger_angle)  
+
+      
+                
         # 獲取右手節點    
         right_hand_landmarks = holistic_result.right_hand_landmarks
         # 如果有偵測的右手節點        
@@ -1872,7 +1893,7 @@ if __name__ == '__main__':
                 hand_right_nodes.append([(surface[0] - xPos),(yPos/3)+300])
             if right_handF_points:
                finger_angle = hand_angle(right_handF_points)
-               fist_right_flag = hand_pos(finger_angle)       
+               fist_right_flag,temp = hand_pos(finger_angle)       
 
         if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag):
             defense_flag = 1
@@ -1904,6 +1925,7 @@ if __name__ == '__main__':
         cv2.putText(img,'shoulder: ' + str(shoulder_left_flag) + ',' + str(shoulder_right_flag), (30,230),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"defense_flag: " + str(defense_flag), (30,260),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"thigh: " + str(thigh_flag), (30,290),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,"mouse: " + str(mouse_x) + ',' + str(mouse_y), (30,320),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
             # 顯示FPS
         showFps(img)
             # 開啟視窗
@@ -1911,6 +1933,12 @@ if __name__ == '__main__':
             # 結束條件
         if cv2.waitKey(1) == ord('q'):
             break
+        if mousecontrol_flag == 0 and fist_left_flag == 0:                    
+            pygame.mouse.set_pos(mouse_x,mouse_y)
+            mousecontrol_break = 0
+        if mousecontrol_flag == 1 and mousecontrol_break == 0:
+            pyautogui.click()
+            mousecontrol_break = 1
         #drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         # 迭代整個事件迴圈，若有符合事件則對應處理
         for event in pygame.event.get():
