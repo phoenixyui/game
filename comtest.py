@@ -102,9 +102,37 @@ user=2  ##1李 2古
 if user==1:
     leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
     rightPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_right-1.jpg")
+    introduce0=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce0.png").convert()
+    introduce1=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce1.png").convert()
+    introduce2=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce2.png").convert()
+    introduce3=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce3.png").convert()
+    introduce4=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce4.png").convert()
+    introduce5=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce5.png").convert()
+    introduce6=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce6.png").convert()
+    stage0=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage0.png").convert()
+    stage1=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage1.png").convert()
+    stage2=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage2.png").convert()
+    stage3=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage3.png").convert()
+    stage4=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage4.png").convert()
+    stage5=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\stage5.png").convert()
+    mouseImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
 elif user==2:
     leftPunch=pygame.image.load("./image/punch_left-1.jpg")
     rightPunch=pygame.image.load("./image/punch_right-1.jpg")
+    introduce0=pygame.image.load("image/introduce0.png").convert()
+    introduce1=pygame.image.load("image/introduce1.png").convert()
+    introduce2=pygame.image.load("image/introduce2.png").convert()
+    introduce3=pygame.image.load("image/introduce3.png").convert()
+    introduce4=pygame.image.load("image/introduce4.png").convert()
+    introduce5=pygame.image.load("image/introduce5.png").convert()
+    introduce6=pygame.image.load("image/introduce6.png").convert()
+    stage0=pygame.image.load("image/stage0.png").convert()
+    stage1=pygame.image.load("image/stage1.png").convert()
+    stage2=pygame.image.load("image/stage2.png").convert()
+    stage3=pygame.image.load("image/stage3.png").convert()
+    stage4=pygame.image.load("image/stage4.png").convert()
+    stage5=pygame.image.load("image/stage5.png").convert()
+    mouseImage=pygame.image.load("./image/mouse.png").convert()
 
 ## menu interface ##
 def Menu():
@@ -153,18 +181,31 @@ def Menu():
 
 ## optional interface ##
 def optional():
-    global currentScene,user
-    mainWindows.fill((0,0,0))
-    if user==1:menuImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\menu.jpg").convert()
-    elif user==2:pygame.image.load("./image/menu.jpg").convert()
-    mainWindows.blit(menuImage,[0,0])
-    opFont=pygame.font.SysFont(None,100)
-    returnText=opFont.render("return",True,(0,0,0))
-    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+    global currentScene
+    mainWindows.blit(introduce0,[0,0])
+    opFont=pygame.font.SysFont(None,80)
+    returnText=opFont.render("return",True,(255,255,255))
+    
 
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+200 and y>= surface[1]*0.85-5 and y<= surface[1]*0.85+55):
+    if(y<surface[1]/2):
+        if(x<surface[0]/3):
+            mainWindows.blit(introduce1,[0,0])
+        if(x>=surface[0]/3 and x<surface[0]*2/3):
+            mainWindows.blit(introduce2,[0,0])
+        if(x>=surface[0]*2/3):
+            mainWindows.blit(introduce3,[0,0])
+    if(y>surface[1]/2 and y<surface[1]*0.9):
+        if(x<surface[0]/3):
+            mainWindows.blit(introduce4,[0,0])
+        if(x>=surface[0]/3 and x<surface[0]*2/3):
+            mainWindows.blit(introduce5,[0,0])
+        if(x>=surface[0]*2/3):
+            mainWindows.blit(introduce6,[0,0])
+    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
+    mainWindows.blit(mouseImage,[x,y])
+    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.9-5 and y<= surface[1]*0.9+returnText.get_height()):
         returnText=opFont.render("return",True,(255,0,0))
-        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="menu"
 
@@ -211,48 +252,14 @@ def selectMode():
 # normal mode ##
 def normalMode():
     global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2
-    mainWindows.fill((0,0,0))
-    
-    normalModeFont=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
-    returnText=normalModeFont.render("return",True,(255,255,255))
-    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+    mainWindows.blit(stage0,[0,0])
 
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4) 
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(3.5*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(6*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(6*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-
-    pygame.draw.rect(mainWindows,(255,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-
-    normalModeFont2=pygame.font.SysFont(None,int(surface[0]/5))
-    oneText=normalModeFont2.render("1",True,(255,255,255))
-    mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-    
-    twoText=normalModeFont2.render("2",True,(255,255,255))
-    mainWindows.blit(twoText,(3.5*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-
-    threeText=normalModeFont2.render("3",True,(255,255,255))
-    mainWindows.blit(threeText,(6*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-
-    fourText=normalModeFont2.render("4",True,(255,255,255))
-    mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
-
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.85 and y<= surface[1]*0.85+returnText.get_height()):
-        returnText=normalModeFont.render("return",True,(255,0,0))
-        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+    if(x>=surface[0]*3/8 and x<=surface[0]*5/8 and y>=surface[1]*2/6 and y<=surface[1]*4/6):
+        mainWindows.blit(stage5,[0,0])
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="menu"
-
-    if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        oneText=normalModeFont2.render("1",True,(0,255,255))
-        mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x<surface[0]*3/8 and y<=surface[1]/2):
+        mainWindows.blit(stage1,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -262,12 +269,8 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level1"
-
-    if(x>=3.5*surface[0]/8 and x<=3.5*surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(3.5*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        twoText=normalModeFont2.render("2",True,(0,255,255))
-        mainWindows.blit(twoText,(3.5*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x>surface[0]*5/8 and y<surface[1]/2):
+        mainWindows.blit(stage2,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -277,28 +280,19 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level2"
-    
-    if(x>=6*surface[0]/8 and x<=6*surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(6*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(6*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        threeText=normalModeFont2.render("3",True,(0,255,255))
-        mainWindows.blit(threeText,(6*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x<surface[0]*3/8 and y>surface[1]/2):
+        mainWindows.blit(stage3,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
             height=surface[1]
-            height2=surface[1]
             attType=0
             distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level3"
-    
-    if(x>=3.5*surface[0]/8 and x<=3.5*surface[0]/8+surface[0]/6 and y>=surface[1]*2/3 and y<=surface[1]*2/3+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        fourText=normalModeFont2.render("4",True,(0,255,255))
-        mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
+    if(x>surface[0]*5/8 and y>surface[1]/2):
+        mainWindows.blit(stage4,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -308,8 +302,6 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level4"
-    if user==1:mouseImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\mouse.png").convert()
-    elif user==2:mouseImage=pygame.image.load("./image/mouse.png").convert()
     mainWindows.blit(mouseImage,[x,y])
 
 def initlife(x):
@@ -326,8 +318,8 @@ def initlife(x):
     elif x==2:
         bosslife = 150
     elif x==3:
-        bosslife = 200
-    elif x==4:bosslife = 250
+        bosslife = 150
+    elif x==4:bosslife = 150
         
 def usermove():
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
@@ -1779,6 +1771,124 @@ def thigh_pos(thigh_angle):
     else: 
         thigh_flag = 0
     return thigh_flag
+#判定跳躍預備動作
+def jump_ready(thigh_angle):
+    global jumpready_flag
+    global jump_ready_keep
+    global jump_flag
+    t1 = thigh_angle[0]
+    t2 = thigh_angle[1]
+    # 雙腳都要大於40
+    if t1 > 40 and t2 > 40:
+        jumpready_flag = 1
+        jump_ready_keep = 1
+        return 'jump ready'        
+    else: 
+        jumpready_flag = 0
+        #jump_flag = 0
+        
+#辦定跳躍
+def jump_pos(body_position):
+    global jump_flag #是否跳躍 0沒有 1有
+    global ctime_leg #蹲下時起跳預備位置
+    global jump_ctime #蹲下時起跳預備時間
+    global jump_ready_keep #保持這次預備直到起跳
+    global jumpready_flag   
+    if ctime_leg == 0:        
+        ctime_leg = body_position[24][1]
+        print("ctime_leg:={}".format(ctime_leg))
+        jump_ctime = time.time()
+    if jumpready_flag == 0 and jump_ready_keep == 1:
+        ptime_leg = body_position[24][1] #起跳位置
+        print("ptime_leg:={}".format(ptime_leg))
+        jump_ptime = time.time() #起跳時間
+        if (jump_ptime - jump_ctime) != 0 and ctime_leg > ptime_leg:            
+            speed = (ctime_leg - ptime_leg)/(jump_ptime - jump_ctime)
+            print("speed = {}".format(speed))
+            if speed>=30: #速度可改 
+                jump_flag = 1
+                jump_ready_keep = 0
+                jumpready_flag = 0
+                ctime_leg = 0
+                ptime_leg = 0
+                jump_ptime= 0
+                jump_ctime= 0
+                print("jump")                
+                return 'jump'
+            else:
+                jump_flag = 0
+                jump_ready_keep = 0
+                jumpready_flag = 0
+                ctime_leg = 0
+                ptime_leg = 0
+                jump_ptime=0
+                jump_ctime=0
+                return ''
+        else :
+            jump_flag = 0
+            jump_ready_keep = 0
+            jumpready_flag = 0
+            ctime_leg = 0
+            ptime_leg = 0
+            jump_ptime=0
+            jump_ctime=0
+            return ''
+    else:
+        jump_flag = 0
+        """
+        ctime_leg = 0
+        jump_ctime = 0
+        """
+        return ''  
+#判定跳躍預備動作
+def jump_ready(thigh_angle):
+    global jumpready_flag
+    global jump_ready_keep
+    t1 = thigh_angle[0]
+    t2 = thigh_angle[1]
+    # 雙腳都要大於40
+    if t1 > 40 and t2 > 40:
+        jumpready_flag = 1
+        jump_ready_keep = 1
+        return 'jump ready'        
+    else: 
+        jumpready_flag = 0     
+#辦定跳躍
+def jump_pos(body_position):
+    global jump_flag #是否跳躍 0沒有 1有
+    global ctime_leg #蹲下時起跳預備位置
+    global jump_ctime #蹲下時起跳預備時間
+    global jump_ready_keep #保持這次預備直到起跳
+    global jumpready_flag   
+    if ctime_leg == 0:        
+        ctime_leg = body_position[24][1]
+        #print("ctime_leg:={}".format(ctime_leg))
+        jump_ctime = time.time()
+    if jumpready_flag == 0 and jump_ready_keep == 1:
+        ptime_leg = body_position[24][1] #起跳位置
+        #print("ptime_leg:={}".format(ptime_leg))
+        jump_ptime = time.time() #起跳時間
+        if (jump_ptime - jump_ctime) != 0 and ctime_leg > ptime_leg:            
+            speed = (ctime_leg - ptime_leg)/(jump_ptime - jump_ctime)
+            #print("speed = {}".format(speed))
+            if speed>=50: #速度可改
+                jump_flag = 1
+                jump_ready_keep = 0
+                jumpready_flag = 0
+                ctime_leg = 0
+                jump_ptime=0
+                jump_ctime=0                
+                return 'jump'
+            else:
+                jump_flag = 0
+                jump_ready_keep = 0
+                jumpready_flag = 0
+                ctime_leg = 0
+                jump_ptime=0
+                jump_ctime=0
+                return ''
+        else :
+            return
 def drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes):
  # 繪出左手的節點到pygame
     for i in range(len(hand_left_nodes)):
@@ -1856,6 +1966,7 @@ if __name__ == '__main__':
             shoulder_points = []
             armpit_points = []
             thigh_points = []
+            jump_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*surface[0])
@@ -1866,7 +1977,7 @@ if __name__ == '__main__':
                 armpit_points.append((xPos,yPos))
                 thigh_points.append((xPos,yPos))
                 body_nodes.append([(surface[0] - xPos),(yPos/3)+300])
-
+                jump_points.append((xPos,yPos))
             # 肩膀角度
             if shoulder_points:
                 sh_angle = shoulder_angle(shoulder_points)
@@ -1881,9 +1992,19 @@ if __name__ == '__main__':
             if armpit_points:
                 armp_angle = armpit_angle(armpit_points)
                 armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)
+            # 腿的角度    
             if thigh_points:
                 th_angle = thigh_angle(thigh_points)
                 thigh_flag = thigh_pos(th_angle)
+
+            if jump_points:                
+                th_angle = thigh_angle(jump_points)
+                jump_ready_text = jump_ready(th_angle)
+            if jumpready_flag == 0 and jump_ready_keep ==0:
+                jump_flag = 0
+                jump_text = ''            
+            elif jumpready_flag == 1 or jump_ready_keep == 1:      
+                jump_text = jump_pos(jump_points)                            
         # 獲取左手節點
         left_hand_landmarks = holistic_result.left_hand_landmarks
         # 如果有偵測到左手節點
@@ -1905,13 +2026,9 @@ if __name__ == '__main__':
                 mouse_y =  left_handF_points[8][1]
                 finger_angle = hand_angle(left_handF_points)
                 fist_left_flag,mousecontrol_flag = hand_pos(finger_angle)  
-
-      
-                
         # 獲取右手節點    
         right_hand_landmarks = holistic_result.right_hand_landmarks
         # 如果有偵測的右手節點        
-        
         if right_hand_landmarks:
             mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
             right_handF_points = []
@@ -1956,11 +2073,13 @@ if __name__ == '__main__':
         cv2.putText(img,"defense_flag: " + str(defense_flag), (30,260),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"thigh: " + str(thigh_flag), (30,290),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"mouse: " + str(mouse_x) + ',' + str(mouse_y), (30,320),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-            # 顯示FPS
+        cv2.putText(img,"jump_flag: " + str(jump_flag), (30,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字  
+        cv2.putText(img,"jump_ready: " + jump_ready_text, (30,380),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字  
+        # 顯示FPS
         showFps(img)
-            # 開啟視窗
+        # 開啟視窗
         cv2.imshow('img',img)
-            # 結束條件
+        # 結束條件
         if cv2.waitKey(1) == ord('q'):
             break
         if mousecontrol_flag == 0 and fist_left_flag == 0:                    
@@ -2063,13 +2182,14 @@ if __name__ == '__main__':
         if defense_flag==1:action_start=1
 
         if defense_flag==0 and action_start==1:action_end=1
+        # 舊版的可刪
+        # if jump_flag ==1:
+        #     destination[1]=0.6*surface[1]
+        #     distance=[destination[1]-userposition[1],2,2]
+        #     timeout=time.time()+0.5
+        #     jump_flag=2
+        #     jump_effect_time=int(time.time())+1
 
-        if jump_flag ==1:
-            destination[1]=0.6*surface[1]
-            distance=[destination[1]-userposition[1],2,2]
-            timeout=time.time()+0.5
-            jump_flag=2
-            jump_effect_time=int(time.time())+1
 
         #userposition[0] = surface[0]/2-surface[0]/16+hand_x
         userposition[0] = 0 + movePoint[0]

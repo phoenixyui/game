@@ -56,6 +56,20 @@ action_end=0
 defence=100
 recover=0
 defencing=0
+introduce0=pygame.image.load("image/introduce0.png").convert()
+introduce1=pygame.image.load("image/introduce1.png").convert()
+introduce2=pygame.image.load("image/introduce2.png").convert()
+introduce3=pygame.image.load("image/introduce3.png").convert()
+introduce4=pygame.image.load("image/introduce4.png").convert()
+introduce5=pygame.image.load("image/introduce5.png").convert()
+introduce6=pygame.image.load("image/introduce6.png").convert()
+stage0=pygame.image.load("image/stage0.png").convert()
+stage1=pygame.image.load("image/stage1.png").convert()
+stage2=pygame.image.load("image/stage2.png").convert()
+stage3=pygame.image.load("image/stage3.png").convert()
+stage4=pygame.image.load("image/stage4.png").convert()
+stage5=pygame.image.load("image/stage5.png").convert()
+mouseImage=pygame.image.load("./image/mouse.png").convert()
 ## menu interface ##
 def Menu():
     global currentScene
@@ -70,7 +84,6 @@ def Menu():
     mainWindows.blit(optionalText,(surface[0]*3/4-startText.get_width()/2,surface[1]*2/4-startText.get_height()))
     exitText=menuFont.render("exit",True,(255,255,255))
     mainWindows.blit(exitText,(surface[0]*3/4-startText.get_width()/2,surface[1]*3/4-startText.get_height()))
-    mouseImage=pygame.image.load("./image/mouse.png").convert()
     mainWindows.blit(mouseImage,[x,y])
 
 
@@ -93,18 +106,33 @@ def Menu():
 ## optional interface ##
 def optional():
     global currentScene
-    mainWindows.fill((0,0,0))
-    menuImage=pygame.image.load("./image/menu.jpg").convert()
-    mainWindows.blit(menuImage,[0,0])
-    opFont=pygame.font.SysFont(None,100)
-    returnText=opFont.render("return",True,(0,0,0))
-    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+    mainWindows.blit(introduce0,[0,0])
+    opFont=pygame.font.SysFont(None,80)
+    returnText=opFont.render("return",True,(255,255,255))
+    
 
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+200 and y>= surface[1]*0.85-5 and y<= surface[1]*0.85+55):
+    if(y<surface[1]/2):
+        if(x<surface[0]/3):
+            mainWindows.blit(introduce1,[0,0])
+        if(x>=surface[0]/3 and x<surface[0]*2/3):
+            mainWindows.blit(introduce2,[0,0])
+        if(x>=surface[0]*2/3):
+            mainWindows.blit(introduce3,[0,0])
+    if(y>surface[1]/2 and y<surface[1]*0.9):
+        if(x<surface[0]/3):
+            mainWindows.blit(introduce4,[0,0])
+        if(x>=surface[0]/3 and x<surface[0]*2/3):
+            mainWindows.blit(introduce5,[0,0])
+        if(x>=surface[0]*2/3):
+            mainWindows.blit(introduce6,[0,0])
+    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
+    mainWindows.blit(mouseImage,[x,y])
+    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.9-5 and y<= surface[1]*0.9+returnText.get_height()):
         returnText=opFont.render("return",True,(255,0,0))
-        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="menu"
+      
 
 ## select mode ##
 def selectMode():
@@ -149,50 +177,14 @@ def selectMode():
 # normal mode ##
 def normalMode():
     global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2
-    mainWindows.fill((0,0,0))
+    mainWindows.blit(stage0,[0,0])
 
-    normalModeFont=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
-    returnText=normalModeFont.render("return",True,(255,255,255))
-    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
-
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4) 
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(3.5*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(6*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(6*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-
-    pygame.draw.rect(mainWindows,(255,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
-    pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-
-    normalModeFont2=pygame.font.SysFont(None,int(surface[0]/5))
-    oneText=normalModeFont2.render("1",True,(255,255,255))
-    mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-    
-    twoText=normalModeFont2.render("2",True,(255,255,255))
-    mainWindows.blit(twoText,(3.5*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-
-    threeText=normalModeFont2.render("3",True,(255,255,255))
-    mainWindows.blit(threeText,(6*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
-
-    fourText=normalModeFont2.render("4",True,(255,255,255))
-    mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
-
-    
-
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.85 and y<= surface[1]*0.85+returnText.get_height()):
-        returnText=normalModeFont.render("return",True,(255,0,0))
-        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.85))
+    if(x>=surface[0]*3/8 and x<=surface[0]*5/8 and y>=surface[1]*2/6 and y<=surface[1]*4/6):
+        mainWindows.blit(stage5,[0,0])
         if event.type == pygame.MOUSEBUTTONUP:
             currentScene="menu"
-
-    if(x>=surface[0]/8 and x<=surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        oneText=normalModeFont2.render("1",True,(0,255,255))
-        mainWindows.blit(oneText,(surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x<surface[0]*3/8 and y<=surface[1]/2):
+        mainWindows.blit(stage1,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -202,12 +194,8 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level1"
-
-    if(x>=3.5*surface[0]/8 and x<=3.5*surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(3.5*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        twoText=normalModeFont2.render("2",True,(0,255,255))
-        mainWindows.blit(twoText,(3.5*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x>surface[0]*5/8 and y<surface[1]/2):
+        mainWindows.blit(stage2,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -217,28 +205,19 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level2"
-    
-    if(x>=6*surface[0]/8 and x<=6*surface[0]/8+surface[0]/6 and y>=surface[1]/6 and y<=surface[1]/6+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(6*surface[0]/8,surface[1]/6,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(6*surface[0]/8+surface[0]/160,surface[1]/6+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        threeText=normalModeFont2.render("3",True,(0,255,255))
-        mainWindows.blit(threeText,(6*surface[0]/8+surface[0]/25,surface[1]/6+surface[1]/40))
+    if(x<surface[0]*3/8 and y>surface[1]/2):
+        mainWindows.blit(stage3,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
             height=surface[1]
-            height2=surface[1]
             attType=0
             distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level3"
-    
-    if(x>=3.5*surface[0]/8 and x<=3.5*surface[0]/8+surface[0]/6 and y>=surface[1]*2/3 and y<=surface[1]*2/3+surface[0]/6):
-        pygame.draw.rect(mainWindows,(0,255,255),(3.5*surface[0]/8,surface[1]*2/3,surface[0]/6,surface[0]/6),border_radius=4)
-        pygame.draw.rect(mainWindows,(0,0,0),(3.5*surface[0]/8+surface[0]/160,surface[1]*2/3+surface[1]/120,surface[0]/6-surface[0]/60,surface[0]/6-surface[0]/60),border_radius=4)
-        fourText=normalModeFont2.render("4",True,(0,255,255))
-        mainWindows.blit(fourText,(3.5*surface[0]/8+surface[0]/25,surface[1]*2/3+surface[1]/40))
+    if(x>surface[0]*5/8 and y>surface[1]/2):
+        mainWindows.blit(stage4,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
             flag=0
             bossflag=0
@@ -248,9 +227,8 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level4"
-    mouseImage=pygame.image.load("./image/mouse.png").convert()
     mainWindows.blit(mouseImage,[x,y])
-
+        
 def initlife(x):
     global bosslife,life,userposition,attTimeout,waittimeout
     attTimeout=0
@@ -265,7 +243,9 @@ def initlife(x):
     elif x==2:
         bosslife = 150
     elif x==3:
-        bosslife = 200
+        bosslife = 150
+    elif x==4:
+        bosslife = 150
         
 def usermove():
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
