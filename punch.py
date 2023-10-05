@@ -108,11 +108,11 @@ def arm_pos(arm_angle):
     left = arm_angle[0]
     right = arm_angle[1]
 
-    if left >= 160:
+    if left >= 150:
         left_flag = 1
     else: 
         left_flag = 0      
-    if right >= 160:
+    if right >= 150:
         right_flag = 1
     else: 
         right_flag = 0

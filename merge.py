@@ -309,7 +309,7 @@ if __name__ == '__main__':
             if arm_points:
                 ar_angle = arm_angle(arm_points) 
                 defense_arm_left_flag,defense_arm_right_flag = arm_pos(ar_angle,100,100)
-                punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,160,160) 
+                punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,150,150) 
             # 腋下角度    
             if armpit_points:
                 armp_angle = armpit_angle(armpit_points)
