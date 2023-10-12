@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     zeroPoint = [srceen_width - int(lm.x*srceen_width),int(lm.y*srceen_height)]
                 xPos = int(lm.x*srceen_width)
                 yPos = int(lm.y*srceen_height)   
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)               
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)               
         img = cv2.flip(img,1)
         cv2.putText(img,str(zeroPoint), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         

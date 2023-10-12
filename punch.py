@@ -24,6 +24,12 @@ punch_left_flag = 0
 punch_right_flag = 0
 armpit_left_flag = 0
 armpit_right_flag = 0
+
+p11 = [0,0]
+p15 = [0,0]
+p12 = [0,0]
+p16 = [0,0]
+
 # 顯示FPS
 def showFps(img):
     global cTime,pTime
@@ -107,7 +113,6 @@ def arm_angle(arm_):
 def arm_pos(arm_angle):
     left = arm_angle[0]
     right = arm_angle[1]
-
     if left >= 150:
         left_flag = 1
     else: 
@@ -160,27 +165,26 @@ if __name__ == '__main__':
         imgRGB = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         # 使用Holistic模型進行處理
         holistic_result = holistic.process(imgRGB)
-
         # 獲取身體節點的位置
         body_landmarks = holistic_result.pose_landmarks
-
         # 如果有偵測到身體節點
         if body_landmarks:
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
-            arm_points = []
-            armpit_points = []
+            body_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*screen_width)
                 yPos = int(lm.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
-                arm_points.append((xPos,yPos))
-                armpit_points.append((xPos,yPos))
-            if arm_points:
-                ar_angle = arm_angle(arm_points) # 計算手指角度，回傳長度為 5 的串列
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                body_points.append((xPos,yPos))
+                if i == 11: p11 = [xPos,yPos]
+                if i == 15: p15 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]
+                if i == 16: p16 = [xPos,yPos]
+            if body_points:
+                ar_angle = arm_angle(body_points) # 計算手指角度，回傳長度為 5 的串列
                 arm_left_flag,arm_right_flag = arm_pos(ar_angle) # 取得手勢所回傳的內容
-            if armpit_points:
-                armp_angle = armpit_angle(armpit_points)
+                armp_angle = armpit_angle(body_points)
                 armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)            
         # 獲取左手節點
         left_hand_landmarks = holistic_result.left_hand_landmarks
@@ -191,7 +195,7 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(left_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 left_handF_points.append((xPos,yPos))       
             if left_handF_points:
                finger_angle = hand_angle(left_handF_points)
@@ -200,14 +204,13 @@ if __name__ == '__main__':
         # 獲取右手節點    
         right_hand_landmarks = holistic_result.right_hand_landmarks
         # 如果有偵測的右手節點        
-        
         if right_hand_landmarks:
             mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
             right_handF_points = []
             for i,hand_point in enumerate(right_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 right_handF_points.append((xPos,yPos))
             
             if right_handF_points:
@@ -218,7 +221,7 @@ if __name__ == '__main__':
         if(fist_left_flag and arm_left_flag and armpit_left_flag): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not arm_left_flag and not armpit_left_flag):
+        if(step_left_flag and fist_left_flag and not arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
             punch_left_flag += 1
             step_left_flag = 0
             
@@ -227,7 +230,7 @@ if __name__ == '__main__':
             step_right_flag = 1 
             
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not arm_right_flag and not armpit_right_flag):
+        if(step_right_flag and fist_right_flag and not arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
             punch_right_flag += 1 
             step_right_flag = 0
         # 反轉
@@ -236,7 +239,6 @@ if __name__ == '__main__':
         cv2.putText(img,'arm: ' + str(arm_left_flag) + ',' + str(arm_right_flag), (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,'armpit: ' + str(armpit_left_flag) + ',' + str(armpit_right_flag), (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,'punch count: ' + str(punch_left_flag) + ',' + str(punch_right_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'flag: ' + str(step_left_flag), (30,2000),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
                 
         # 顯示FPS
         showFps(img)

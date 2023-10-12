@@ -43,6 +43,10 @@ armpit_left_flag = 0
 armpit_right_flag = 0
 step_left_flag = 0
 step_right_flag = 0
+p11 = [0,0]
+p15 = [0,0]
+p12 = [0,0]
+p16 = [0,0]
 #####SQUATDOWN#####
 thigh_flag = 0
 #####JUMP#####
@@ -284,42 +288,34 @@ if __name__ == '__main__':
         # 如果有偵測到身體節點
         if body_landmarks:
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
-            arm_points = []
-            shoulder_points = []
-            armpit_points = []
-            thigh_points = []
-            jump_points = []
+
+            body_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*screen_width)
                 yPos = int(lm.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
-                arm_points.append((xPos,yPos))
-                shoulder_points.append((xPos,yPos))
-                armpit_points.append((xPos,yPos))
-                thigh_points.append((xPos,yPos))
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                body_points.append((xPos,yPos))   
                 body_nodes.append([(screen_width - xPos),(yPos/3)+300])
-                jump_points.append((xPos,yPos))
-            # 肩膀角度
-            if shoulder_points:
-                sh_angle = shoulder_angle(shoulder_points)
+                if i == 11: p11 = [xPos,yPos]
+                if i == 15: p15 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]
+                if i == 16: p16 = [xPos,yPos]
+            if body_points:
+                # 肩膀角度
+                sh_angle = shoulder_angle(body_points)
                 shoulder_left_flag,shoulder_right_flag = shoulder_pos(sh_angle)
-
-            # 手臂角度    
-            if arm_points:
-                ar_angle = arm_angle(arm_points) 
+                # 手臂角度    
+                ar_angle = arm_angle(body_points) 
                 defense_arm_left_flag,defense_arm_right_flag = arm_pos(ar_angle,100,100)
                 punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,150,150) 
-            # 腋下角度    
-            if armpit_points:
-                armp_angle = armpit_angle(armpit_points)
+                # 腋下角度    
+                armp_angle = armpit_angle(body_points)
                 armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)
-            if thigh_points:
-                th_angle = thigh_angle(thigh_points)
+                # 大腿角度
+                th_angle = thigh_angle(body_points)
                 thigh_flag = thigh_pos(th_angle)
-                  
-                
-              
+                       
         # 獲取左手節點
         left_hand_landmarks = holistic_result.left_hand_landmarks
         # 如果有偵測到左手節點
@@ -329,7 +325,7 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(left_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 left_handF_points.append([xPos,yPos])       
                 hand_left_nodes.append([(screen_width - xPos),(yPos/3)+300])
             if left_handF_points:
@@ -346,7 +342,7 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(right_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 right_handF_points.append((xPos,yPos))
                 hand_right_nodes.append([(screen_width - xPos),(yPos/3)+300])
             if right_handF_points:
@@ -361,7 +357,7 @@ if __name__ == '__main__':
         if(fist_left_flag and punch_arm_left_flag and armpit_left_flag): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and not armpit_left_flag):
+        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
             punch_left_flag += 1
             step_left_flag = 0
             
@@ -370,7 +366,7 @@ if __name__ == '__main__':
             step_right_flag = 1 
             
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and not armpit_right_flag):
+        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
             punch_right_flag += 1 
             step_right_flag = 0
         # 反轉

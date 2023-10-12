@@ -77,15 +77,15 @@ if __name__ == '__main__':
         # 如果有偵測到身體節點
         if body_landmarks:            
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)            
-            thigh_points = []            
+            body_points = []            
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*srceen_width)
                 yPos = int(lm.y*srceen_height)   
                 cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)  
-                thigh_points.append((xPos,yPos))
-            if thigh_points:
-                th_angle = thigh_angle(thigh_points)
+                body_points.append((xPos,yPos))
+            if body_points:
+                th_angle = thigh_angle(body_points)
                 thigh_flag = thigh_pos(th_angle)
                        
         img = cv2.flip(img,1)
