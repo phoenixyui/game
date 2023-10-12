@@ -21,6 +21,7 @@ holistic = mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confid
 #####共用#####
 ball_radius = 2
 red = (255,0,0)
+user_color=(0,255,0)
 fist_left_flag = 0
 fist_right_flag = 0
 #####DEFENSE#####
@@ -38,6 +39,10 @@ armpit_left_flag = 0
 armpit_right_flag = 0
 step_left_flag = 0
 step_right_flag = 0
+p11 = [0,0]
+p12 = [0,0]
+p15 = [0,0]
+p16 = [0,0]
 #####SQUATDOWN#####
 thigh_flag = 0
 jump_flag=0
@@ -46,7 +51,13 @@ jump_ready_keep =0
 jumpready_flag=0
 ctime_leg=0
 jump_ctime=0
-###################################
+#######READY########
+detect_point = [[0,0],[0,0],[0,0]]
+a_color,b_color,c_color = 255,0,0
+color_flag = 0
+
+
+
 pTime = 0
 cTime = 0
 thigh_text = ''
@@ -64,6 +75,7 @@ windows_colors=(0,0,0)
 level=["level1","level2","level3","level4"]
 intro=["intro1","intro2","intro3","intro4","intro5","intro6"]
 currentScene="menu"
+tempScene=""
 currentClick=[0,0,"menu"]
 pygame.init()
 mainWindows=pygame.display.set_mode((surface[0],surface[1]),RESIZABLE,32)
@@ -182,7 +194,7 @@ def Menu():
             sys.exit()
 
 def optional():
-    global currentScene,successtimes,flag
+    global currentScene,successtimes,flag,tempScene,color_flag
     mainWindows.blit(introduce0,[0,0])
     opFont=pygame.font.SysFont(None,80)
     returnText=opFont.render("return",True,(255,255,255))
@@ -194,38 +206,45 @@ def optional():
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 flag=0
                 successtimes=0
-                currentScene="intro1"
+                color_flag=0
+                currentScene="ready"
+                tempScene="intro1"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce2,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 successtimes=0
                 flag=0
-                currentScene="intro2"
+                currentScene="ready"
+                tempScene="intro2"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce3,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 successtimes=0
                 flag=0
-                currentScene="intro3"
+                currentScene="ready"
+                tempScene="intro3"
     if(y>surface[1]/2 and y<surface[1]*0.9):
         if(x<surface[0]/3):
             mainWindows.blit(introduce4,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 successtimes=0
                 flag=0
-                currentScene="intro4"
+                currentScene="ready"
+                tempScene="intro4"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce5,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 successtimes=0
                 flag=0
-                currentScene="intro5"
+                currentScene="ready"
+                tempScene="intro5"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce6,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 successtimes=0
                 flag=0
-                currentScene="intro6"
+                currentScene="ready"
+                tempScene="intro6"
     mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
     mainWindows.blit(mouseImage,[x,y])
     if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.9-5 and y<= surface[1]*0.9+returnText.get_height()):
@@ -235,7 +254,7 @@ def optional():
             currentScene="menu"
 
 def normalMode():
-    global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2
+    global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2,tempScene
     mainWindows.blit(stage0,[0,0])
 
     if(x>=surface[0]*3/8 and x<=surface[0]*5/8 and y>=surface[1]*2/6 and y<=surface[1]*4/6):
@@ -253,6 +272,7 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level1"
+            tempScene="level1"
     if(x>surface[0]*5/8 and y<surface[1]/2):
         mainWindows.blit(stage2,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
@@ -263,7 +283,8 @@ def normalMode():
             distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
-            currentScene="level2"
+            currentScene="ready"
+            tempScene="level2"
     if(x<surface[0]*3/8 and y>surface[1]/2):
         mainWindows.blit(stage3,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
@@ -275,6 +296,7 @@ def normalMode():
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="level3"
+            tempScene="level3"
     if(x>surface[0]*5/8 and y>surface[1]/2):
         mainWindows.blit(stage4,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
@@ -285,7 +307,8 @@ def normalMode():
             distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
-            currentScene="level4"
+            currentScene="ready"
+            tempScene="level4"
     mainWindows.blit(mouseImage,[x,y])
 
 
@@ -2416,6 +2439,45 @@ def intro6():
         #print(userposition[1],destination[1],distance)
         usermove()
 
+def ready():
+    global currentScene,tempScene,hand_left_nodes,hand_right_nodes,body_nodes,a_color,b_color,c_color,color_flag,detect_point,waittimeout,hit_flag
+    mainWindows.fill((0,0,0))
+    drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
+    all_node=hand_left_nodes+hand_right_nodes+body_nodes
+    if color_flag==0:
+        for i in range(len(all_node)):
+            if all_node[i][1]<surface[1]/2:
+                hit_flag=1
+        if hit_flag==0:color_flag=1
+
+    if color_flag==1:
+        color_flag=2
+        waittimeout=int(time.time())+2
+
+    if waittimeout==int(time.time()):
+        currentScene=tempScene
+    # if a_color == 255 and color_flag != -1: 
+    #     color_flag = 0
+    #     if a_color == 0 and color_flag != -1:
+    #         color_flag = 1
+    #     if color_flag == 0:
+    #         a_color = a_color - 50
+    #     if color_flag == 1:
+    #         a_color = a_color + 50
+    #     if (detect_point[0][1] > surface[1]/2 and detect_point[0][1] < surface[1] and detect_point[1][1] > surface[1]/2 and 
+    #         detect_point[1][1] < surface[1] and detect_point[2][1] > surface[1]/2 and detect_point[2][1] < surface[1]):
+            
+    #         color_flag = -1
+    #         a_color,b_color,c_color = 0,255,0  
+    #     else:
+    #         if color_flag == -1:
+    #             a_color,b_color,c_color = 255,0,0  
+    #             color_flag = 0
+    pygame.draw.rect(mainWindows, (a_color,b_color,c_color), (0,surface[1]/2,surface[0],surface[1]*0.5),5)  # 最後一個參數是外框寬度
+    hand_left_nodes.clear()
+    hand_right_nodes.clear() 
+    body_nodes.clear() 
+
 
 def windowssize(x):
     global mainWindows
@@ -2464,6 +2526,9 @@ def createScene():
     if currentScene == "intro6":
         windowssize(2)
         intro6()
+    if currentScene == "ready":
+        windowssize(2)
+        ready()
 
 def vector_2d_angle(v1, v2):
     v1_x = v1[0]
@@ -2765,40 +2830,40 @@ def drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes):
     for i in range(len(hand_left_nodes)):
         pygame.draw.circle(mainWindows, red, (int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])), ball_radius)
         if(i==0):
-            pygame.draw.line(mainWindows,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1]))) 
-            pygame.draw.line(mainWindows,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1]))) 
-            pygame.draw.line(mainWindows,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1])),2) 
         if(i == 5 or i == 9 or i == 13):
-            pygame.draw.line(mainWindows,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1])),2) 
         if(i%4 != 0 and i < len(hand_left_nodes)-1):
-            pygame.draw.line(mainWindows,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1])),2) 
     # hand_left_nodes.clear()  
     
 
     for i in range(len(hand_right_nodes)):
         pygame.draw.circle(mainWindows, red, (int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])), ball_radius)
         if(i==0):
-            pygame.draw.line(mainWindows,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1]))) 
-            pygame.draw.line(mainWindows,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1]))) 
-            pygame.draw.line(mainWindows,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1])),2) 
         if(i == 5 or i == 9 or i == 13):
-            pygame.draw.line(mainWindows,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1])),2) 
         if(i%4 != 0 and i < len(hand_right_nodes)-1):
-            pygame.draw.line(mainWindows,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1])),2) 
     # hand_right_nodes.clear()  
 
     for i in range(len(body_nodes)):
         pygame.draw.circle(mainWindows, red, (int(body_nodes[i][0]),int(body_nodes[i][1])), ball_radius)
         if((i >= 11 and i <= 14) or (i >= 23 and i <= 26)):
-            pygame.draw.line(mainWindows,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),2) 
         if(i == 11 or i == 23):
-            pygame.draw.line(mainWindows,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1])),2) 
         if(i == 11 or i == 12):
-            pygame.draw.line(mainWindows,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1]))) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1])),2) 
         if(i >= 27 and i <=30):
-            pygame.draw.line(mainWindows,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])))
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),2)
         if(i == 28 or i == 27):
-            pygame.draw.line(mainWindows,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])))
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])),2)
     # body_nodes.clear()
 
 # 顯示FPS
@@ -2833,48 +2898,73 @@ if __name__ == '__main__':
         # 如果有偵測到身體節點
         if body_landmarks:
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
-            arm_points = []
-            shoulder_points = []
-            armpit_points = []
-            thigh_points = []
-            jump_points = []
+            body_points = []
+            # arm_points = []
+            # shoulder_points = []
+            # armpit_points = []
+            # thigh_points = []
+            # jump_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*surface[0])
                 yPos = int(lm.y*surface[1])
                 cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
-                arm_points.append((xPos,yPos))
-                shoulder_points.append((xPos,yPos))
-                armpit_points.append((xPos,yPos))
-                thigh_points.append((xPos,yPos))
+                body_points.append((xPos,yPos))
+                # arm_points.append((xPos,yPos))
+                # shoulder_points.append((xPos,yPos))
+                # armpit_points.append((xPos,yPos))
+                # thigh_points.append((xPos,yPos))
                 body_nodes.append([(surface[0] - xPos),(yPos/3)+300])
-                jump_points.append((xPos,yPos))
-
-            # 肩膀角度
-            if shoulder_points:
-                sh_angle = shoulder_angle(shoulder_points)
-                shoulder_left_flag,shoulder_right_flag = shoulder_pos(sh_angle)
-
-            # 手臂角度    
-            if arm_points:
-                ar_angle = arm_angle(arm_points) 
+                # jump_points.append((xPos,yPos))
+                if i == 0 : detect_point[0] = [(surface[0] - xPos),(yPos/3)+300]
+                if i == 27: detect_point[1] = [(surface[0] - xPos),(yPos/3)+300]
+                if i == 28: detect_point[2] = [(surface[0] - xPos),(yPos/3)+300]
+               
+                if i == 11: p11 = [xPos,yPos]
+                if i == 15: p15 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]
+                if i == 16: p16 = [xPos,yPos]
+            if body_points:
+                # 肩膀角度
+                sh_angle = shoulder_angle(body_points)
+                shoulder_left_flag,shoulder_right_flag = shoulder_pos(sh_angle)    
+                # 手臂角度    
+                ar_angle = arm_angle(body_points) 
                 defense_arm_left_flag,defense_arm_right_flag = arm_pos(ar_angle,100,100)
-                punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,160,160) 
-            # 腋下角度    
-            if armpit_points:
-                armp_angle = armpit_angle(armpit_points)
-                armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)
-            if thigh_points:
-                th_angle = thigh_angle(thigh_points)
-                thigh_flag = thigh_pos(th_angle)
-            if jump_points:                
-                th_angle = thigh_angle(jump_points)
-                jump_ready_text = jump_ready(th_angle)
+                punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,150,150)
+                # 腋下角度    
+                armp_angle = armpit_angle(body_points)
+                armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)   
+                # 大腿角度      
+                th_angle = thigh_angle(body_points)
+                thigh_flag = thigh_pos(th_angle)          
+                jump_ready_text = jump_ready(th_angle)                
+
+            # # 肩膀角度
+            # if shoulder_points:
+            #     sh_angle = shoulder_angle(shoulder_points)
+            #     shoulder_left_flag,shoulder_right_flag = shoulder_pos(sh_angle)
+
+            # # 手臂角度    
+            # if arm_points:
+            #     ar_angle = arm_angle(arm_points) 
+            #     defense_arm_left_flag,defense_arm_right_flag = arm_pos(ar_angle,100,100)
+            #     punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,150,150) 
+            # # 腋下角度    
+            # if armpit_points:
+            #     armp_angle = armpit_angle(armpit_points)
+            #     armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)
+            # if thigh_points:
+            #     th_angle = thigh_angle(thigh_points)
+            #     thigh_flag = thigh_pos(th_angle)
+            # if jump_points:                
+            #     th_angle = thigh_angle(jump_points)
+            #     jump_ready_text = jump_ready(th_angle)
             if jumpready_flag == 0 and jump_ready_keep ==0:
                 jump_flag = 0
                 jump_text = ''            
             elif jumpready_flag == 1 or jump_ready_keep == 1:      
-                jump_text = jump_pos(jump_points)   
+                jump_text = jump_pos(body_points)   
         # 獲取左手節點
         left_hand_landmarks = holistic_result.left_hand_landmarks
         # 如果有偵測到左手節點
@@ -2924,7 +3014,7 @@ if __name__ == '__main__':
         if(fist_left_flag and punch_arm_left_flag and armpit_left_flag): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and not armpit_left_flag):
+        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
             punch_left_flag = 1
             step_left_flag = 0
             
@@ -2933,7 +3023,7 @@ if __name__ == '__main__':
             step_right_flag = 1 
             
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and not armpit_right_flag):
+        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
             punch_right_flag = 1 
             step_right_flag = 0
         # 反轉
