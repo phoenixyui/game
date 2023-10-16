@@ -204,45 +204,32 @@ def optional():
         if(x<surface[0]/3):
             mainWindows.blit(introduce1,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                flag=0
-                successtimes=0
-                color_flag=0
                 currentScene="ready"
                 tempScene="intro1"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce2,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                successtimes=0
-                flag=0
                 currentScene="ready"
                 tempScene="intro2"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce3,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                successtimes=0
-                flag=0
                 currentScene="ready"
                 tempScene="intro3"
     if(y>surface[1]/2 and y<surface[1]*0.9):
         if(x<surface[0]/3):
             mainWindows.blit(introduce4,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                successtimes=0
-                flag=0
                 currentScene="ready"
                 tempScene="intro4"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce5,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                successtimes=0
-                flag=0
                 currentScene="ready"
                 tempScene="intro5"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce6,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
-                successtimes=0
-                flag=0
                 currentScene="ready"
                 tempScene="intro6"
     mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
@@ -254,7 +241,7 @@ def optional():
             currentScene="menu"
 
 def normalMode():
-    global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2,tempScene
+    global currentScene,flag,bossflag,height,attType,destination,distance,gflag,height2,tempScene,color_flag
     mainWindows.blit(stage0,[0,0])
 
     if(x>=surface[0]*3/8 and x<=surface[0]*5/8 and y>=surface[1]*2/6 and y<=surface[1]*4/6):
@@ -264,49 +251,21 @@ def normalMode():
     if(x<surface[0]*3/8 and y<=surface[1]/2):
         mainWindows.blit(stage1,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
-            flag=0
-            bossflag=0
-            height=surface[1]
-            attType=0
-            distance=[0,5,5]
-            gflag=0
-            destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
-            currentScene="level1"
+            currentScene="ready"
             tempScene="level1"
     if(x>surface[0]*5/8 and y<surface[1]/2):
         mainWindows.blit(stage2,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
-            flag=0
-            bossflag=0
-            height=surface[1]
-            attType=0
-            distance=[0,5,5]
-            gflag=0
-            destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="ready"
             tempScene="level2"
     if(x<surface[0]*3/8 and y>surface[1]/2):
         mainWindows.blit(stage3,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
-            flag=0
-            bossflag=0
-            height=surface[1]
-            attType=0
-            distance=[0,5,5]
-            gflag=0
-            destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
-            currentScene="level3"
+            currentScene="ready"
             tempScene="level3"
     if(x>surface[0]*5/8 and y>surface[1]/2):
         mainWindows.blit(stage4,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
-            flag=0
-            bossflag=0
-            height=surface[1]
-            attType=0
-            distance=[0,5,5]
-            gflag=0
-            destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
             currentScene="ready"
             tempScene="level4"
     mainWindows.blit(mouseImage,[x,y])
@@ -762,7 +721,7 @@ def level3():
             attTimeout=int(time.time())+3.0
             zone=random.randint(1,5)
             #print(zone)
-            zone=4
+            zone=5
             selected=random.sample(range(0,5),zone)
             if zone==5:
                 attTimeout2=int(time.time())+4
@@ -792,9 +751,9 @@ def level3():
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
     #print(userposition)
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
-        hand_left_nodes.clear()
-        hand_right_nodes.clear() 
-        body_nodes.clear() 
+        # hand_left_nodes.clear()
+        # hand_right_nodes.clear() 
+        # body_nodes.clear() 
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
         if(attTimeout2!=0):drawAttType2()
@@ -1021,7 +980,7 @@ def level3():
                     # if userposition[0]+surface[0]/8>surface[0]*4/5:
                     #     life-=1
                     #     usercolor=(255,0,0) 
-            else:
+            elif zone==5:
                 if(selected[4]==0 and hitflag==0):
                     for i in range(len(all_nodes)):
                         if (all_nodes[i][0]>surface[0]/5) :
@@ -1036,7 +995,7 @@ def level3():
                     #     usercolor=(255,0,0)
                 if(selected[4]==1 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>2*surface[0]/5 and all_nodes[i][0]<surface[0]/5) :
+                        if (all_nodes[i][0]>2*surface[0]/5 or all_nodes[i][0]<surface[0]/5) :
                             life-=1
                             usercolor=(255,0,0)
                             colortimeout=int(time.time())+0.5
@@ -1048,7 +1007,7 @@ def level3():
                     #     usercolor=(255,0,0) 
                 if(selected[4]==2 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>3*surface[0]/5 and all_nodes[i][0]<2*surface[0]/5) :
+                        if (all_nodes[i][0]>3*surface[0]/5 or all_nodes[i][0]<2*surface[0]/5) :
                             life-=1
                             usercolor=(255,0,0)
                             colortimeout=int(time.time())+0.5
@@ -1060,7 +1019,7 @@ def level3():
                     #     usercolor=(255,0,0)
                 if(selected[4]==3 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>4*surface[0]/5 and all_nodes[i][0]<3*surface[0]/5) :
+                        if (all_nodes[i][0]>4*surface[0]/5 or all_nodes[i][0]<3*surface[0]/5) :
                             life-=1
                             usercolor=(255,0,0)
                             colortimeout=int(time.time())+0.5
@@ -1218,9 +1177,6 @@ def level4():
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
     #print(userposition)
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
-        hand_left_nodes.clear()
-        hand_right_nodes.clear() 
-        body_nodes.clear() 
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
         if(attTimeout2!=0):drawAttType2()
@@ -1432,7 +1388,7 @@ def level4():
                     #     usercolor=(255,0,0)
                 if(selected[4]==1 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>2*surface[0]/5 and all_nodes[i][0]<surface[0]/5) :
+                        if (all_nodes[i][0]>2*surface[0]/5 or all_nodes[i][0]<surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -1442,7 +1398,7 @@ def level4():
                     #     usercolor=(255,0,0) 
                 if(selected[4]==2 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>3*surface[0]/5 and all_nodes[i][0]<2*surface[0]/5) :
+                        if (all_nodes[i][0]>3*surface[0]/5 or all_nodes[i][0]<2*surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -1452,7 +1408,7 @@ def level4():
                     #     usercolor=(255,0,0)
                 if(selected[4]==3 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>4*surface[0]/5 and all_nodes[i][0]<3*surface[0]/5) :
+                        if (all_nodes[i][0]>4*surface[0]/5 or all_nodes[i][0]<3*surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -1861,7 +1817,6 @@ def intro5():
         mainWindows.blit(introbg,[0,0])
         gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
         if bossflag ==0:
-            hit_flag=0
             attType=5
             attTimeout=int(time.time())+3
             zone=random.randint(1,5)
@@ -1903,9 +1858,6 @@ def intro5():
                 currentScene="optional"
 
         if attTimeout2!=int(time.time()) and (successtimes<=3) and zone==5:
-            hand_left_nodes.clear()
-            hand_right_nodes.clear() 
-            body_nodes.clear() 
             timepass2=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
             if(attTimeout2!=0):drawAttType2()
@@ -2068,7 +2020,7 @@ def intro5():
                         #     usercolor=(255,0,0)
                     if(selected[4]==1 and hitflag==0):
                         for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]>2*surface[0]/5 and all_nodes[i][0]<surface[0]/5) :
+                            if (all_nodes[i][0]>2*surface[0]/5 or all_nodes[i][0]<surface[0]/5) :
                                 usercolor=(255,0,0)
                                 colortimeout=int(time.time())+0.5
                                 hitflag=1
@@ -2079,7 +2031,7 @@ def intro5():
                         #     usercolor=(255,0,0) 
                     if(selected[4]==2 and hitflag==0):
                         for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]>3*surface[0]/5 and all_nodes[i][0]<2*surface[0]/5) :
+                            if (all_nodes[i][0]>3*surface[0]/5 or all_nodes[i][0]<2*surface[0]/5) :
                                 usercolor=(255,0,0)
                                 colortimeout=int(time.time())+0.5
                                 hitflag=1
@@ -2090,7 +2042,7 @@ def intro5():
                         #     usercolor=(255,0,0)
                     if(selected[4]==3 and hitflag==0):
                         for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]>4*surface[0]/5 and all_nodes[i][0]<3*surface[0]/5) :
+                            if (all_nodes[i][0]>4*surface[0]/5 or all_nodes[i][0]<3*surface[0]/5) :
                                 usercolor=(255,0,0)
                                 colortimeout=int(time.time())+0.5
                                 hitflag=1
@@ -2217,9 +2169,6 @@ def intro6():
         if defence >=100:defence=100
 
         if attTimeout2!=int(time.time()) and (successtimes<=3) and zone==5:
-            hand_left_nodes.clear()
-            hand_right_nodes.clear() 
-            body_nodes.clear() 
             timepass2=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
             if(attTimeout2!=0):drawAttType2()
@@ -2390,7 +2339,7 @@ def intro6():
                     #     usercolor=(255,0,0)
                 if(selected[4]==1 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>2*surface[0]/5 and all_nodes[i][0]<surface[0]/5) :
+                        if (all_nodes[i][0]>2*surface[0]/5 or all_nodes[i][0]<surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -2400,7 +2349,7 @@ def intro6():
                     #     usercolor=(255,0,0) 
                 if(selected[4]==2 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>3*surface[0]/5 and all_nodes[i][0]<2*surface[0]/5) :
+                        if (all_nodes[i][0]>3*surface[0]/5 or all_nodes[i][0]<2*surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -2410,7 +2359,7 @@ def intro6():
                     #     usercolor=(255,0,0)
                 if(selected[4]==3 and hitflag==0):
                     for i in range(len(all_nodes)):
-                        if (all_nodes[i][0]>4*surface[0]/5 and all_nodes[i][0]<3*surface[0]/5) :
+                        if (all_nodes[i][0]>4*surface[0]/5 or all_nodes[i][0]<3*surface[0]/5) :
                             defencefunc()
                             hitflag=1
                             break
@@ -2440,22 +2389,48 @@ def intro6():
         usermove()
 
 def ready():
-    global currentScene,tempScene,hand_left_nodes,hand_right_nodes,body_nodes,a_color,b_color,c_color,color_flag,detect_point,waittimeout,hit_flag
+    global currentScene,tempScene,hand_left_nodes,hand_right_nodes,body_nodes,a_color,b_color,c_color,color_flag,waittimeout,successtimes
+    global flag,bossflag,height,attType,destination,distance,gflag,height2
     mainWindows.fill((0,0,0))
     drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
     all_node=hand_left_nodes+hand_right_nodes+body_nodes
-    if color_flag==0:
-        for i in range(len(all_node)):
-            if all_node[i][1]<surface[1]/2:
-                hit_flag=1
-        if hit_flag==0:color_flag=1
+    a_color,b_color,c_color = 255,0,0
+    for i in range(len(all_node)): 
+        if i>200:
+            color_flag=0
+            break
+        if all_node[i][1]<surface[1]*0.3 or all_node[i][0]>surface[0]/2:
+            color_flag=0
+            waittimeout=0
+            break
+        if all_node[len(all_node)-1][1]>surface[1]*0.3 and all_node[len(all_node)-1][0]<surface[0]/2 and color_flag==0:
+            color_flag=1
+            
 
     if color_flag==1:
-        color_flag=2
-        waittimeout=int(time.time())+2
+        a_color,b_color,c_color = 0,255,0
+        waittimeout=int(time.time())+3
+    elif color_flag==2:a_color,b_color,c_color = 0,255,0
+    elif color_flag==0:a_color,b_color,c_color = 255,0,0
 
-    if waittimeout==int(time.time()):
+    if waittimeout!=0 and color_flag==1:color_flag=2
+    if waittimeout!=0 and waittimeout!=int(time.time()) and color_flag!=0:
+        text=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
+        startText=text.render(str(int(waittimeout)-int(time.time())),True,(255,255,255))
+        mainWindows.blit(startText,(surface[0]*0.5-startText.get_width()/2,surface[1]*0.2-startText.get_height()/2))
+    elif waittimeout!=0 and waittimeout==int(time.time()) and color_flag==2:
+        waittimeout=0
+        flag=0
+        bossflag=0
+        height=surface[1]
+        attType=0
+        distance=[0,5,5]
+        gflag=0
+        destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
+        color_flag=0
+        successtimes=0
         currentScene=tempScene
+
     # if a_color == 255 and color_flag != -1: 
     #     color_flag = 0
     #     if a_color == 0 and color_flag != -1:
@@ -2473,10 +2448,11 @@ def ready():
     #         if color_flag == -1:
     #             a_color,b_color,c_color = 255,0,0  
     #             color_flag = 0
-    pygame.draw.rect(mainWindows, (a_color,b_color,c_color), (0,surface[1]/2,surface[0],surface[1]*0.5),5)  # 最後一個參數是外框寬度
+    pygame.draw.rect(mainWindows, (a_color,b_color,c_color), (0,surface[1]*0.3,surface[0]/2,surface[1]*0.7),5)  # 最後一個參數是外框寬度
     hand_left_nodes.clear()
     hand_right_nodes.clear() 
     body_nodes.clear() 
+    all_node.clear()
 
 
 def windowssize(x):
@@ -2775,56 +2751,7 @@ def jump_pos(body_position):
         jump_ctime = 0
         """
         return ''  
-#判定跳躍預備動作
-def jump_ready(thigh_angle):
-    global jumpready_flag
-    global jump_ready_keep
-    t1 = thigh_angle[0]
-    t2 = thigh_angle[1]
-    # 雙腳都要大於40
-    if t1 > 40 and t2 > 40:
-        jumpready_flag = 1
-        jump_ready_keep = 1
-        return 'jump ready'        
-    else: 
-        jumpready_flag = 0     
-#辦定跳躍
-def jump_pos(body_position):
-    global jump_flag #是否跳躍 0沒有 1有
-    global ctime_leg #蹲下時起跳預備位置
-    global jump_ctime #蹲下時起跳預備時間
-    global jump_ready_keep #保持這次預備直到起跳
-    global jumpready_flag   
-    if ctime_leg == 0:        
-        ctime_leg = body_position[24][1]
-        #print("ctime_leg:={}".format(ctime_leg))
-        jump_ctime = time.time()
-    if jumpready_flag == 0 and jump_ready_keep == 1:
-        ptime_leg = body_position[24][1] #起跳位置
-        #print("ptime_leg:={}".format(ptime_leg))
-        jump_ptime = time.time() #起跳時間
-        if (jump_ptime - jump_ctime) != 0 and ctime_leg > ptime_leg:            
-            speed = (ctime_leg - ptime_leg)/(jump_ptime - jump_ctime)
-            #print("speed = {}".format(speed))
-            if speed>=50: #速度可改
-                jump_flag = 1
-                jump_ready_keep = 0
-                jumpready_flag = 0
-                ctime_leg = 0
-                jump_ptime=0
-                jump_ctime=0                
-                return 'jump'
-            else:
-                jump_flag = 0
-                jump_ready_keep = 0
-                jumpready_flag = 0
-                ctime_leg = 0
-                jump_ptime=0
-                jump_ctime=0
-                return ''
-        else :
-            return
-        
+   
 def drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes):
  # 繪出左手的節點到pygame
     for i in range(len(hand_left_nodes)):
@@ -3044,10 +2971,10 @@ if __name__ == '__main__':
             # 結束條件
         if cv2.waitKey(1) == ord('q'):
             break
-        if mousecontrol_flag == 0 and fist_left_flag == 0 and not((currentScene in level)):                    
+        if mousecontrol_flag == 0 and fist_left_flag == 0 and flag!=1:                    
             pygame.mouse.set_pos(mouse_x,mouse_y)
             mousecontrol_break = 0
-        if mousecontrol_flag == 1 and mousecontrol_break == 0 and not((currentScene in level)):
+        if mousecontrol_flag == 1 and mousecontrol_break == 0 and flag!=1:
             pyautogui.click()
             mousecontrol_break = 1
         #drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
@@ -3106,6 +3033,8 @@ if __name__ == '__main__':
                     thigh_effect_time=int(time.time())+1
                 if event.key == pygame.K_q:
                     life+=1
+                if event.key == pygame.K_l:
+                    successtimes+=1
             
         if jump_flag==1:
             jump_effect_time=int(time.time())+1        
@@ -3151,7 +3080,7 @@ if __name__ == '__main__':
         ## 隨時更新視窗大小 ##
         surface[0]=mainWindows.get_width()
         surface[1]=mainWindows.get_height()
-        print(visibility)
+        #print(visibility)
         ## 隨時取得滑鼠位置 ##
         x, y = pygame.mouse.get_pos()
         createScene()
