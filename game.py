@@ -104,6 +104,7 @@ def Menu():
     elif(x>=surface[0]/2 and y>surface[1]/4 and y<=surface[1]*2/4):
         pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/2-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
+            
             currentScene="optional"
 
     elif(x>=surface[0]/2 and y>surface[1]*2/4 and y<=surface[1]*3/4):
@@ -185,6 +186,7 @@ def normalMode():
             distance=[0,5,5]
             gflag=0
             destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
+            windowssize(2)
             currentScene="level1"
     if(x>surface[0]*5/8 and y<surface[1]/2):
         mainWindows.blit(stage2,[0,0])
@@ -510,6 +512,7 @@ def level1():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -1780,16 +1783,16 @@ def windowssize(x):
 ## use "currentScene" variaty to change the interface ##        
 def createScene():
     if currentScene == "menu":
-        windowssize(1)
+        # windowssize(1)
         Menu()
     if currentScene == "optional":
-        windowssize(1)
+        # windowssize(1)
         optional()
     if currentScene == "normalMode":
-        windowssize(1)
+        # windowssize(1)
         normalMode()
     if currentScene == "level1":
-        windowssize(2)
+        # windowssize(2)
         level1()
     if currentScene == "stop":
         stop()
@@ -1797,7 +1800,7 @@ def createScene():
         windowssize(2)
         level2()
     if currentScene == "level3":
-        windowssize(2)
+        # windowssize(2)
         level3()
     if currentScene == "level4":
         windowssize(2)
@@ -1895,9 +1898,12 @@ while True:
                 if event.key == pygame.K_g:
                     action_end=1
                 # if(defence>0 and action_start==action_end):action_start=action_end=0
-        if event.type == pygame.KEYDOWN and currentScene == "stop":
-            if event.key == pygame.K_ESCAPE:
-                currentScene="level1"
+            if event.key ==pygame.K_SPACE:
+                    life-=1
+                    if life<=0:
+                        flag=0
+                        windowssize(1)
+                        currentScene="normalMode"
         if bosslife==0 and currentScene=="level1":
             gameovertimeout=int(time.time())+8
             visibility=0
