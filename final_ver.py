@@ -2676,8 +2676,8 @@ def thigh_angle(thigh_):
 def thigh_pos(thigh_angle):
     t1 = thigh_angle[0]
     t2 = thigh_angle[1]
-    # 雙腳都要大於50
-    if t1 > 50 and t2 > 50:
+    # 雙腳角度都要小於160度
+    if t1 > 20 and t2 > 20:
         thigh_flag = 1
     else: 
         thigh_flag = 0
@@ -2826,23 +2826,13 @@ if __name__ == '__main__':
         if body_landmarks:
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
             body_points = []
-            # arm_points = []
-            # shoulder_points = []
-            # armpit_points = []
-            # thigh_points = []
-            # jump_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*surface[0])
                 yPos = int(lm.y*surface[1])
                 cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
                 body_points.append((xPos,yPos))
-                # arm_points.append((xPos,yPos))
-                # shoulder_points.append((xPos,yPos))
-                # armpit_points.append((xPos,yPos))
-                # thigh_points.append((xPos,yPos))
                 body_nodes.append([(surface[0] - xPos),(yPos/3)+300])
-                # jump_points.append((xPos,yPos))
                 if i == 0 : detect_point[0] = [(surface[0] - xPos),(yPos/3)+300]
                 if i == 27: detect_point[1] = [(surface[0] - xPos),(yPos/3)+300]
                 if i == 28: detect_point[2] = [(surface[0] - xPos),(yPos/3)+300]
@@ -2867,26 +2857,6 @@ if __name__ == '__main__':
                 thigh_flag = thigh_pos(th_angle)          
                 jump_ready_text = jump_ready(th_angle)                
 
-            # # 肩膀角度
-            # if shoulder_points:
-            #     sh_angle = shoulder_angle(shoulder_points)
-            #     shoulder_left_flag,shoulder_right_flag = shoulder_pos(sh_angle)
-
-            # # 手臂角度    
-            # if arm_points:
-            #     ar_angle = arm_angle(arm_points) 
-            #     defense_arm_left_flag,defense_arm_right_flag = arm_pos(ar_angle,100,100)
-            #     punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle,150,150) 
-            # # 腋下角度    
-            # if armpit_points:
-            #     armp_angle = armpit_angle(armpit_points)
-            #     armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)
-            # if thigh_points:
-            #     th_angle = thigh_angle(thigh_points)
-            #     thigh_flag = thigh_pos(th_angle)
-            # if jump_points:                
-            #     th_angle = thigh_angle(jump_points)
-            #     jump_ready_text = jump_ready(th_angle)
             if jumpready_flag == 0 and jump_ready_keep ==0:
                 jump_flag = 0
                 jump_text = ''            
@@ -2914,8 +2884,6 @@ if __name__ == '__main__':
                 finger_angle = hand_angle(left_handF_points)
                 fist_left_flag,mousecontrol_flag = hand_pos(finger_angle)  
 
-      
-                
         # 獲取右手節點    
         right_hand_landmarks = holistic_result.right_hand_landmarks
         # 如果有偵測的右手節點        
