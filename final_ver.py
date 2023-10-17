@@ -2563,14 +2563,11 @@ def hand_pos(finger_angle):
     else:
         fist_flag = 0
 
-    mousecontrol_flag = 0
-    # 小於 50 表示手指伸直，大於等於 50 表示手指捲縮
-    if f3>=50 and f4>=50 and f5>=50: #只有食指伸直，表示移動
-        mousecontrol_flag = 0        
-    elif f4>=50 and f5>=50: #食指跟中指伸直，表示點擊
-        mousecontrol_flag = 1  
-    else:
-        mousecontrol_flag = -1 
+    mousecontrol_flag = -1
+    if f2 <= 50: #食指伸直
+        mousecontrol_flag = 0
+    if f2<=50 and f3<=50: #食指跟大拇指伸直
+        mousecontrol_flag = 1 
     return fist_flag,mousecontrol_flag
     
 def arm_angle(arm_):
@@ -2874,7 +2871,7 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(left_hand_landmarks.landmark):
                 xPos = int(hand_point.x*surface[0])
                 yPos = int(hand_point.y*surface[1])
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 left_handF_points.append([xPos,yPos])       
                 hand_left_nodes.append([(surface[0] - xPos),(yPos/3)+300])
                 left_handF_mouse_points.append((surface[0] - xPos,yPos))
@@ -2894,12 +2891,14 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(right_hand_landmarks.landmark):
                 xPos = int(hand_point.x*surface[0])
                 yPos = int(hand_point.y*surface[1])
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 right_handF_points.append((xPos,yPos))
                 hand_right_nodes.append([(surface[0] - xPos),(yPos/3)+300])
             if right_handF_points:
-               finger_angle = hand_angle(right_handF_points)
-               fist_right_flag,temp = hand_pos(finger_angle)       
+                mouse_x =  surface[0] - right_handF_points[8][0]
+                mouse_y =  right_handF_points[8][1]
+                finger_angle = hand_angle(right_handF_points)
+                fist_right_flag,mousecontrol_flag = hand_pos(finger_angle)       
 
         if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag):
             defense_flag = 1
