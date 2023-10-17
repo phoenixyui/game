@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from pygame.locals import QUIT
 import sys
+import os
 import threading
 import random
 import cv2
@@ -78,8 +79,11 @@ currentScene="menu"
 tempScene=""
 currentClick=[0,0,"menu"]
 pygame.init()
+xPos = 20
+yPos = 30
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (xPos, yPos)
 mainWindows=pygame.display.set_mode((surface[0],surface[1]),RESIZABLE,32)
-mainWindows.fill(windows_colors)
+mainWindows.fill(0)
 bossposition=[0,0,0,0]
 userposition=[surface[0]/2-surface[0]/16,surface[1]*0.75,surface[0]/8,surface[1]*0.25]
 destination=[surface[0]/2-surface[0]/16,surface[1]*0.75]
@@ -119,6 +123,8 @@ jump_effect_time=0
 user=2  ##1李 2古
 successtimes=0
 hit_flag=0
+
+
 
 if user==1:
     leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
@@ -186,11 +192,13 @@ def Menu():
     if(x>=surface[0]/2 and y>=0 and y<=surface[1]/4):
         pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/6,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
+            windowssize(1)
             currentScene="normalMode"
 
     elif(x>=surface[0]/2 and y>surface[1]/4 and y<=surface[1]*2/4):
         pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/2-startText.get_height()*1.2,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
+            windowssize(1)
             currentScene="optional"
 
     elif(x>=surface[0]/2 and y>surface[1]*2/4 and y<=surface[1]*3/4):
@@ -210,32 +218,38 @@ def optional():
         if(x<surface[0]/3):
             mainWindows.blit(introduce1,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro1"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce2,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro2"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce3,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro3"
     if(y>surface[1]/2 and y<surface[1]*0.9):
         if(x<surface[0]/3):
             mainWindows.blit(introduce4,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro4"
         if(x>=surface[0]/3 and x<surface[0]*2/3):
             mainWindows.blit(introduce5,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro5"
         if(x>=surface[0]*2/3):
             mainWindows.blit(introduce6,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
+                windowssize(2)
                 currentScene="ready"
                 tempScene="intro6"
     mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
@@ -244,6 +258,7 @@ def optional():
         returnText=opFont.render("return",True,(255,0,0))
         mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
         if event.type == pygame.MOUSEBUTTONUP:
+            windowssize(1)
             currentScene="menu"
 
 def normalMode():
@@ -253,25 +268,30 @@ def normalMode():
     if(x>=surface[0]*3/8 and x<=surface[0]*5/8 and y>=surface[1]*2/6 and y<=surface[1]*4/6):
         mainWindows.blit(stage5,[0,0])
         if event.type == pygame.MOUSEBUTTONUP:
+            windowssize(1)
             currentScene="menu"
     if(x<surface[0]*3/8 and y<=surface[1]/2):
         mainWindows.blit(stage1,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            windowssize(2)
             currentScene="ready"
             tempScene="level1"
     if(x>surface[0]*5/8 and y<surface[1]/2):
         mainWindows.blit(stage2,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            windowssize(2)
             currentScene="ready"
             tempScene="level2"
     if(x<surface[0]*3/8 and y>surface[1]/2):
         mainWindows.blit(stage3,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            windowssize(2)
             currentScene="ready"
             tempScene="level3"
     if(x>surface[0]*5/8 and y>surface[1]/2):
         mainWindows.blit(stage4,[0,0])
         if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="normalMode":
+            windowssize(2)
             currentScene="ready"
             tempScene="level4"
     mainWindows.blit(mouseImage,[x,y])
@@ -524,6 +544,7 @@ def level1():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -544,6 +565,7 @@ def level1():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -671,6 +693,7 @@ def level2():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -690,6 +713,7 @@ def level2():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -859,6 +883,7 @@ def level3():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -877,6 +902,7 @@ def level3():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -1083,6 +1109,7 @@ def level3():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -1101,6 +1128,7 @@ def level3():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -1279,6 +1307,7 @@ def level4():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -1297,6 +1326,7 @@ def level4():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -1475,6 +1505,7 @@ def level4():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="normalMode"
                 flag=0
                 return
@@ -1493,6 +1524,7 @@ def level4():
                 mainWindows.fill((0,0,0))
                 winflag[0]=1
                 flag=0
+                windowssize(1)
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
@@ -1556,6 +1588,7 @@ def intro1():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -1616,6 +1649,7 @@ def intro2():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -1720,6 +1754,7 @@ def intro4():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -1802,6 +1837,7 @@ def intro3():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -1894,6 +1930,7 @@ def intro5():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -2185,6 +2222,7 @@ def intro6():
                     visibility=255
             else:
                 mainWindows.fill((0,0,0))
+                windowssize(1)
                 currentScene="optional"
                 flag=0
                 return
@@ -2503,46 +2541,46 @@ def windowssize(x):
 ## use "currentScene" variaty to change the interface ##        
 def createScene():
     if currentScene == "menu":
-        windowssize(1)
+        # windowssize(1)
         Menu()
     if currentScene == "optional":
-        windowssize(1)
+        # windowssize(1)
         optional()
     if currentScene == "normalMode":
-        windowssize(1)
+        # windowssize(1)
         normalMode()
     if currentScene == "level1":
-        windowssize(2)
+        # windowssize(2)
         level1()
     if currentScene == "level2":
-        windowssize(2)
+        # windowssize(2)
         level2()
     if currentScene == "level3":
-        windowssize(2)
+        # windowssize(2)
         level3()
     if currentScene == "level4":
-        windowssize(2)
+        # windowssize(2)
         level4()
     if currentScene == "intro1":
-        windowssize(2)
+        # windowssize(2)
         intro1()
     if currentScene == "intro2":
-        windowssize(2)
+        # windowssize(2)
         intro2()
     if currentScene == "intro3":
-        windowssize(2)
+        # windowssize(2)
         intro3()
     if currentScene == "intro4":
-        windowssize(2)
+        # windowssize(2)
         intro4()
     if currentScene == "intro5":
-        windowssize(2)
+        # windowssize(2)
         intro5()
     if currentScene == "intro6":
-        windowssize(2)
+        # windowssize(2)
         intro6()
     if currentScene == "ready":
-        windowssize(2)
+        # windowssize(2)
         ready()
 
 def vector_2d_angle(v1, v2):
@@ -3019,6 +3057,7 @@ if __name__ == '__main__':
                     life-=1
                     if life<=0:
                         flag=0
+                        windowssize(1)
                         currentScene="normalMode"
                 if event.key == pygame.K_LEFT :
                     destination[0]=surface[0]/4-surface[0]/16
