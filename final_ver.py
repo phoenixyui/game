@@ -178,6 +178,8 @@ elif user==2:
     jump=pygame.image.load("image/jump.png")
     squat=pygame.image.load("image/squat.png")
     bang=pygame.image.load("image/bang.png")
+    punch3=pygame.image.load("image/punch3.png")
+    punch4=pygame.image.load("image/punch4.png")
 
 
 def Menu():
@@ -448,11 +450,13 @@ def drawUser(x):
 
     if(x==1):
         mainWindows.blit(rightPunch,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2])
-        mainWindows.blit(punch2,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch2.get_height()]) 
-
+        if (currentScene == "level4" or currentScene == "level3"):mainWindows.blit(punch2,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch2.get_height()]) 
+        else:mainWindows.blit(punch4,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch4.get_height()])
+        
     elif(x==2):
         mainWindows.blit(leftPunch,[surface[0]/4,surface[1]/2]) 
-        mainWindows.blit(punch,[surface[0]/4-rightPunch.get_width(),surface[1]/2-punch.get_height()])    
+        if (currentScene == "level4" or currentScene == "level3"):mainWindows.blit(punch,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch.get_height()]) 
+        else:mainWindows.blit(punch3,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch3.get_height()])    
 
 def drawbossaction(x):
     if x==1:mainWindows.blit(bang,[surface[0]/4-bang.get_width()/2,0+bang.get_height()/2])
