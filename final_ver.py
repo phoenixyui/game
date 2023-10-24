@@ -108,7 +108,8 @@ usercolor=(255,255,255)
 bosscolor=(0,0,0)
 useraction=0 
 actiontimeout=0
-
+bossaction=0
+bossaction_timeout=0
 multipleAttackZone=[0,surface[0]/5,2*surface[0]/5,3*surface[0]/5,4*surface[0]/5]
 zone=0
 selected=[]
@@ -159,7 +160,7 @@ elif user==2:
     stage3=pygame.image.load("image/stage3.png").convert()
     stage4=pygame.image.load("image/stage4.png").convert()
     stage5=pygame.image.load("image/stage5.png").convert()
-    mouseImage=pygame.image.load("image/mouse.png").convert()
+    mouseImage=pygame.image.load("image/mouse.png")
     menuImage=pygame.image.load("image/menu_punch.png").convert()
     introbg=pygame.image.load("image/intro_bg.png").convert()
     level1bg=pygame.image.load("image/level1bg.png").convert()
@@ -172,6 +173,12 @@ elif user==2:
     ready4=pygame.image.load("image/ready4.png").convert()
     ready5=pygame.image.load("image/ready5.png").convert()
     ready6=pygame.image.load("image/ready6.png").convert()
+    punch=pygame.image.load("image/punch.png")
+    punch2=pygame.image.load("image/punch2.png")
+    jump=pygame.image.load("image/jump.png")
+    squat=pygame.image.load("image/squat.png")
+    bang=pygame.image.load("image/bang.png")
+
 
 def Menu():
     global currentScene
@@ -440,8 +447,20 @@ def drawUser(x):
     pygame.draw.line(mainWindows,bosscolor,(surface[0]/2-surface[0]/16+userposition[2]/2,surface[1]*0.4+userposition[2]),(surface[0]/2-surface[0]/16+userposition[2]*5/6,surface[1]*0.4+userposition[2]*0.85),3)
     pygame.draw.line(mainWindows,bosscolor,(surface[0]/2-surface[0]/16+userposition[2]*5/6,surface[1]*0.4+userposition[2]*0.85),(surface[0]/2-surface[0]/16+userposition[2]*3/4,surface[1]*0.4+userposition[2]*0.65),3)
 
-    if(x==1):mainWindows.blit(rightPunch,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2]) 
-    elif(x==2):mainWindows.blit(leftPunch,[surface[0]/4,surface[1]/2]) 
+    if(x==1):
+        mainWindows.blit(rightPunch,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2])
+        mainWindows.blit(punch2,[surface[0]*3/4-rightPunch.get_width(),surface[1]/2-punch2.get_height()]) 
+
+    elif(x==2):
+        mainWindows.blit(leftPunch,[surface[0]/4,surface[1]/2]) 
+        mainWindows.blit(punch,[surface[0]/4-rightPunch.get_width(),surface[1]/2-punch.get_height()])    
+
+def drawbossaction(x):
+    if x==1:mainWindows.blit(bang,[surface[0]/4-bang.get_width()/2,0+bang.get_height()/2])
+    elif x==2:mainWindows.blit(bang,[surface[0]*3/4-bang.get_width()/2,0+bang.get_height()/2])
+    elif x==3:mainWindows.blit(jump,[surface[0]/2-jump.get_width()/2,0+jump.get_height()/2])
+    elif x==4:mainWindows.blit(squat,[surface[0]/2-jump.get_width()/2,0+jump.get_height()/2])
+    elif x==5:mainWindows.blit(bang,[surface[0]/2-bang.get_width()/2,0+bang.get_height()/2])
 
 def defencefunc():
     global usercolor,defence,life,successtimes
@@ -455,7 +474,7 @@ def defencefunc():
 
 def level1():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-    global hitflag,user
+    global hitflag,user,bossaction,bossaction_timeout
     if flag==0:
         initlife(1)
         attTimeout=int(time.time())+2
@@ -475,19 +494,23 @@ def level1():
         timepass=0
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.blit(level1bg,[0,0])
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
     if not gflag:
+        # if attType==1 and attTimeout==int(time.time()):mainWindows.blit(level1_hit1,[0,0])
+        # elif attType==2 and attTimeout==int(time.time()):mainWindows.blit(level1_hit2,[0,0])
+        drawbossaction(bossaction)
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))  
         for i in range (0,life):
             if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
+        
+
         ##顯示左上角愛心##
     
     if attTimeout!=int(time.time()) and (not(gflag)) and bosslife>0:  #boss攻擊時間未結束 and 遊戲未結束
@@ -504,6 +527,8 @@ def level1():
         hand_right_nodes.clear() 
         body_nodes.clear() 
         if(attType==1) and hitflag==0:
+            bossaction=1
+            bossaction_timeout=int(time.time())+1
             for i in range(len(all_nodes)):
                 if all_nodes[i][0]<surface[0]/2 :
                     life-=1
@@ -513,6 +538,8 @@ def level1():
                     break
             all_nodes.clear()
         elif(attType==2) and hitflag==0:
+            bossaction=2
+            bossaction_timeout=int(time.time())+1
             for i in range(len(all_nodes)):
                 if all_nodes[i][0]>surface[0]/2 :
                     life-=1
@@ -574,11 +601,15 @@ def level1():
     if colortimeout <= round(time.time(),1):
         usercolor=(255,255,255)
         bosscolor=(0,0,0)
-        
+
+    if bossaction_timeout<=int (time.time()):
+        bossaction=0
+
     if actiontimeout <= int(time.time()):    
         useraction=0
 
     if waittimeout == int(time.time()):
+        bossaction=0
         waittimeout=0
         bossflag=0
     #print(userposition[1],destination[1],distance)
@@ -586,7 +617,7 @@ def level1():
 
 def level2():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout
-    global hitflag,thigh_effect_time,jump_effect_time,user
+    global hitflag,thigh_effect_time,jump_effect_time,user,bossaction,bossaction_timeout
     if flag==0:
         initlife(2)
         attTimeout=int(time.time())+2
@@ -599,6 +630,8 @@ def level2():
     if bossflag ==0:
         attType=random.randint(1,4)
         if attType==3 or attType==4:
+            bossaction=attType
+            bossaction_timeout=int(time.time())+1
             attTimeout=int(time.time())+1.5
         else:
             attTimeout=int(time.time())+3
@@ -610,18 +643,20 @@ def level2():
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.blit(level2bg,[0,0])
     
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
+    
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
     if not gflag:
+        drawbossaction(bossaction)
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
         for i in range (0,life):
             if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
         ##顯示左上角愛心##
     #print(userposition)
     if attTimeout!=round(time.time(),1) and (not(gflag)) and bosslife>0:  #boss攻擊時間未結束 and 遊戲未結束
@@ -638,6 +673,8 @@ def level2():
         hand_right_nodes.clear() 
         body_nodes.clear()    
         if(attType==1) and hitflag==0:
+            bossaction=1
+            bossaction_timeout=int(time.time())+1
             for i in range(len(all_nodes)):
                 if all_nodes[i][0]<surface[0]/2 :
                     life-=1
@@ -647,6 +684,8 @@ def level2():
                     break
             all_nodes.clear()
         elif(attType==2) and hitflag==0:
+            bossaction=2
+            bossaction_timeout=int(time.time())+1
             for i in range(len(all_nodes)):
                 if all_nodes[i][0]>surface[0]/2 :
                     life-=1
@@ -656,6 +695,7 @@ def level2():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
+            bossaction=0
             if jump_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
@@ -663,6 +703,7 @@ def level2():
                 hitflag=1
             all_nodes.clear()
         elif(attType==4) and hitflag==0:
+            bossaction=0
             if thigh_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
@@ -722,7 +763,10 @@ def level2():
     if colortimeout <= round(time.time(),1):
         usercolor=(255,255,255)
         bosscolor=(0,0,0)
-        
+
+    if bossaction_timeout<= int(time.time()):
+        bossaction=0
+
     if actiontimeout <= int(time.time()):    
         useraction=0
 
@@ -736,7 +780,7 @@ def level3():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
-    global hitflag,thigh_effect_time,jump_effect_time,user
+    global hitflag,thigh_effect_time,jump_effect_time,user,bossaction,bossaction_timeout
 
     if flag==0:
         initlife(3)
@@ -750,8 +794,9 @@ def level3():
         ##以上是進遊戲後只會做一次的初始化##
     if bossflag ==0:
         attType=random.randint(1,4)
-        attType=1
         if attType==3 or attType==4:
+            bossaction=attType
+            bossaction_timeout=int(time.time())+1
             attTimeout=int(time.time())+1.5
         elif attType == 1 or attType == 2:
             attType=5
@@ -773,19 +818,22 @@ def level3():
         usercolor=(255,255,255)
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.blit(level3bg,[0,0])
-    for i in range (0,life):
-        if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
-        elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
-        mainWindows.blit(lifeImage,[50*i,0])
+    
         ##顯示左上角愛心##
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
+     
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
     if not gflag:
+        drawbossaction(bossaction)
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
+        for i in range (0,life):
+            if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
+            mainWindows.blit(lifeImage,[50*i,0])
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))  
     #print(userposition)
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
         # hand_left_nodes.clear()
@@ -795,6 +843,8 @@ def level3():
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
         if(attTimeout2!=0):drawAttType2()
     elif (not(gflag)) and zone==5:
+        bossaction=5
+        bossaction_timeout=int(time.time())+1
         all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
         hand_left_nodes.clear()
         hand_right_nodes.clear() 
@@ -943,6 +993,7 @@ def level3():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
+            bossaction=0
             if jump_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
@@ -950,6 +1001,7 @@ def level3():
                 hitflag=1
             all_nodes.clear()
         elif(attType==4) and hitflag==0:
+            bossaction=0
             if thigh_effect_time<int(time.time()):
                 life-=1
                 usercolor=(255,0,0)
@@ -957,6 +1009,8 @@ def level3():
                 hitflag=1
             all_nodes.clear()
         elif(attType==5) and hitflag==0:
+            bossaction=5
+            bossaction_timeout=int(time.time())+1
             if zone!=5:
                 if (0 in selected):
                     for i in range(len(all_nodes)):
@@ -1140,6 +1194,9 @@ def level3():
     if actiontimeout == int(time.time()):    
         useraction=0
 
+    if bossaction_timeout<=int(time.time()):
+        bossaction=0
+
     if waittimeout == int(time.time()):
         zone=0
         selected=[]
@@ -1152,7 +1209,7 @@ def level4():
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
     global action_start,action_end,defence,recover,defencing
-    global hitflag,thigh_effect_time,jump_effect_time,user
+    global hitflag,thigh_effect_time,jump_effect_time,user,bossaction,bossaction_timeout
 
     if flag==0:
         initlife(2)
@@ -1167,6 +1224,8 @@ def level4():
     if bossflag ==0:
         attType=random.randint(1,4)
         if attType==3 or attType==4:
+            bossaction=attType
+            bossaction_timeout=int(time.time())+1
             attTimeout=int(time.time())+1.5
         elif attType == 1 or attType == 2:
             attType=5
@@ -1188,15 +1247,7 @@ def level4():
         usercolor=(255,255,255)
         ##以上是每次boss攻擊前需更動的值##
     mainWindows.blit(level4bg,[0,0])
-    for i in range (0,life):
-        if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
-        elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
-        mainWindows.blit(lifeImage,[50*i,0])
-        ##顯示左上角愛心##
-    pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
-    
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-    pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
+     
     gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
     gameoverText=gameover.render("YOU DIED",True,(255,0,0))
 
@@ -1221,14 +1272,26 @@ def level4():
     
 
     if not gflag:
+        drawbossaction(bossaction)
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
+        for i in range (0,life):
+            if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
+            elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
+            mainWindows.blit(lifeImage,[50*i,0])
+        ##顯示左上角愛心##
+        pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
+        
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))  
     #print(userposition)
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
         if(attTimeout2!=0):drawAttType2()
     elif (not(gflag)) and zone==5:
+        bossaction=5
+        bossaction_timeout=int(time.time())+1
         all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
         hand_left_nodes.clear()
         hand_right_nodes.clear() 
@@ -1363,16 +1426,20 @@ def level4():
                     break
             all_nodes.clear()
         elif(attType==3) and hitflag==0:
+            bossaction=0
             if jump_effect_time<int(time.time()):
                 defencefunc()
                 hitflag=1
             all_nodes.clear()
         elif(attType==4) and hitflag==0:
+            bossaction=0
             if thigh_effect_time<int(time.time()):
                 defencefunc()
                 hitflag=1
             all_nodes.clear()
         elif(attType==5) and hitflag==0:
+            bossaction=5
+            bossaction_timeout=int(time.time())+1
             if zone!=5:
                 if (0 in selected):
                     for i in range(len(all_nodes)):
@@ -1536,6 +1603,9 @@ def level4():
     if actiontimeout == int(time.time()):    
         useraction=0
 
+    if bossaction_timeout<=int(time.time()):
+        bossaction=0
+
     if waittimeout == int(time.time()):
         zone=0
         selected=[]
@@ -1596,6 +1666,7 @@ def intro1():
 
 def intro2():
     global successtimes,currentScene,visibility,attTimeout,bossflag,attType,recordtime,height,timepass,usercolor,colortimeout,flag,useraction,waittimeout,hitflag
+    global bossaction,bossaction_timeout
     if flag==0:
         attTimeout=int(time.time())+2
         bossflag=1
@@ -1632,11 +1703,12 @@ def intro2():
             image2=pygame.image.load("./image/success.png")
             mainWindows.blit(image2,[400+j*150,100])
         if successtimes<3:
+            drawbossaction(bossaction)
             drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
             drawUser(useraction)
-            hand_left_nodes.clear()
-            hand_right_nodes.clear() 
-            body_nodes.clear() 
+            # hand_left_nodes.clear()
+            # hand_right_nodes.clear() 
+            # body_nodes.clear() 
         elif successtimes>=4:
             secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)
             if gameovertimeout!=int(time.time()):
@@ -1658,6 +1730,9 @@ def intro2():
             timepass=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
             drawAttType(attType)
+            hand_left_nodes.clear()
+            hand_right_nodes.clear() 
+            body_nodes.clear()
                 
         else:     
             all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
@@ -1665,9 +1740,10 @@ def intro2():
             hand_right_nodes.clear() 
             body_nodes.clear() 
             if(attType==1) and hitflag==0:
+                bossaction=1
+                bossaction_timeout=int(time.time())+1
                 for i in range(len(all_nodes)):
                     if all_nodes[i][0]<surface[0]/2 :
-                        life-=1
                         usercolor=(255,0,0)
                         colortimeout=int(time.time())+0.5
                         hitflag=1
@@ -1675,9 +1751,10 @@ def intro2():
                 if hitflag==0:successtimes+=1
                 all_nodes.clear()
             elif(attType==2) and hitflag==0:
+                bossaction=2
+                bossaction_timeout=int(time.time())+1
                 for i in range(len(all_nodes)):
                     if all_nodes[i][0]>surface[0]/2 :
-                        life-=1
                         usercolor=(255,0,0)
                         colortimeout=int(time.time())+0.5
                         hitflag=1
@@ -1692,6 +1769,9 @@ def intro2():
         if actiontimeout <= int(time.time()):    
             useraction=0
 
+        if bossaction_timeout<=int(time.time()):
+            bossaction=0
+
         if waittimeout == int(time.time()):
             waittimeout=0
             bossflag=0
@@ -1700,7 +1780,7 @@ def intro2():
 
 def intro4():
     global successtimes,currentScene,visibility,attTimeout,bossflag,attType,recordtime,height,timepass,usercolor,colortimeout,flag,useraction,waittimeout,jump_effect_time
-    
+    global bossaction,bossaction_timeout
 
     if flag==0:
         attTimeout=int(time.time())+2
@@ -1722,6 +1802,8 @@ def intro4():
         gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
         if bossflag ==0:
             attType=4
+            bossaction=4
+            bossaction_timeout=int(time.time())+1
             attTimeout=int(time.time())+1.5
             recordtime=int(time.time())
             height=surface[1]
@@ -1737,6 +1819,7 @@ def intro4():
             image2=pygame.image.load("./image/success.png")
             mainWindows.blit(image2,[400+j*150,100])
         if successtimes<3:
+            drawbossaction(bossaction)
             drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
             drawUser(useraction)
             hand_left_nodes.clear()
@@ -1766,6 +1849,7 @@ def intro4():
                 
         else:     
             if(attType==4):
+                bossaction=0
                 if thigh_effect_time<int(time.time()):
                     usercolor=(255,0,0)
                 else:
@@ -1776,7 +1860,8 @@ def intro4():
             
         if actiontimeout <= int(time.time()):    
             useraction=0
-
+        if bossaction_timeout<=int(time.time()):
+            bossaction=0
         if waittimeout == int(time.time()):
             waittimeout=0
             bossflag=0
@@ -1785,6 +1870,7 @@ def intro4():
 
 def intro3():
     global successtimes,currentScene,visibility,attTimeout,bossflag,attType,recordtime,height,timepass,usercolor,colortimeout,flag,useraction,waittimeout,thigh_effect_time
+    global bossaction,bossaction_timeout
     if flag==0:
         attTimeout=int(time.time())+2
         bossflag=1
@@ -1805,6 +1891,8 @@ def intro3():
         gameover=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
         if bossflag ==0:
             attType=3
+            bossaction=3
+            bossaction_timeout=int(time.time())+1
             attTimeout=int(time.time())+1.5
             recordtime=int(time.time())
             height=surface[1]
@@ -1820,6 +1908,7 @@ def intro3():
             image2=pygame.image.load("./image/success.png")
             mainWindows.blit(image2,[400+j*150,100])
         if successtimes<3:
+            drawbossaction(bossaction)
             drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
             drawUser(useraction)
             hand_left_nodes.clear()
@@ -1849,6 +1938,7 @@ def intro3():
                 
         else:     
             if(attType==3):
+                bossaction=0
                 if jump_effect_time<int(time.time()):
                     usercolor=(255,0,0)
                 else:
@@ -1859,7 +1949,8 @@ def intro3():
             
         if actiontimeout <= int(time.time()):    
             useraction=0
-
+        if bossaction_timeout<=int(time.time()):
+            bossaction=0
         if waittimeout == int(time.time()):
             waittimeout=0
             bossflag=0
@@ -1868,7 +1959,7 @@ def intro3():
 
 def intro5():
     global successtimes,currentScene,visibility,attTimeout,bossflag,attType,recordtime,height,timepass,usercolor,colortimeout,flag,useraction,waittimeout
-    global attTimeout2,selected,zone,hitflag,timepass2
+    global attTimeout2,selected,zone,hitflag,timepass2,bossaction,bossaction_timeout
     
 
     if flag==0:
@@ -1913,6 +2004,7 @@ def intro5():
             image2=pygame.image.load("./image/success.png")
             mainWindows.blit(image2,[400+j*150,100])
         if successtimes<3:
+            drawbossaction(bossaction)
             drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
             drawUser(useraction)
             # hand_left_nodes.clear()
@@ -1941,7 +2033,8 @@ def intro5():
             if(attTimeout2!=0):drawAttType2()
         elif (successtimes<=3) and zone==5:
             all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
-            
+            bossaction=5
+            bossaction_timeout=int(time.time())+1
             if (selected[4]==0 and hitflag==0):
                 for i in range(len(all_nodes)):
                     if all_nodes[i][0]<surface[0]/5 :
@@ -2017,71 +2110,17 @@ def intro5():
                 
         elif attTimeout<=round(time.time(),1) and (successtimes<=3):  
             all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
-            hand_left_nodes.clear()
-            hand_right_nodes.clear() 
-            body_nodes.clear()    
             if(attType==5):
+                bossaction=5
+                bossaction_timeout=int(time.time())+1
                 if zone!=5:
-                    if (0 in selected):
+                    for j in range(len(selected)):
                         for i in range(len(all_nodes)):
-                            if all_nodes[i][0]<surface[0]/5 :
-                                usercolor=(255,0,0)
-                                colortimeout=int(time.time())+0.5
+                            if(all_nodes[i][0]>selected[j]*surface[0]/5 and all_nodes[i][0]<(selected[j]+1)*surface[0]/5):
                                 hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if userposition[0]<surface[0]/5:
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (1 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<2*surface[0]/5 and all_nodes[i][0]> surface[0]/5) :
-                                usercolor=(255,0,0)
-                                colortimeout=int(time.time())+0.5
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (2 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<3*surface[0]/5 and all_nodes[i][0]> 2*surface[0]/5) :
-                                usercolor=(255,0,0)
-                                colortimeout=int(time.time())+0.5
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (3 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<4*surface[0]/5 and all_nodes[i][0]> 3*surface[0]/5) :
-                                usercolor=(255,0,0)
-                                colortimeout=int(time.time())+0.5
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (4 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]>4*surface[0]/5) :
-                                usercolor=(255,0,0)
-                                colortimeout=int(time.time())+0.5
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if userposition[0]+surface[0]/8>surface[0]*4/5:
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
+
+
+                    all_nodes.clear() 
                     if hitflag==0:successtimes+=1
                 elif zone==5:
                     if(selected[4]==0 and hitflag==0):
@@ -2139,13 +2178,17 @@ def intro5():
                         # if userposition[0]<surface[0]*4/5:
                         #     life-=1
                         #     usercolor=(255,0,0)
+            hand_left_nodes.clear()
+            hand_right_nodes.clear() 
+            body_nodes.clear() 
             attType=0
             waittimeout=int(time.time())+2 #攻擊間隔
             timepass=0
             timepass2=0  
         if actiontimeout <= int(time.time()):    
             useraction=0
-
+        if bossaction_timeout<=int(time.time()):
+            bossaction=0
         if waittimeout == int(time.time()):
             hitflag=0
             waittimeout=0
@@ -2157,7 +2200,7 @@ def intro6():
     global currentScene,bosslife,bossposition,life,winflag,bossflag,flag,hitflag
     global userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,usercolor,bosscolor,colortimeout,useraction,actiontimeout,multipleAttackZone,zone,selected,attTimeout2,timepass2
-    global action_start,action_end,defence,recover,defencing,successtimes
+    global action_start,action_end,defence,recover,defencing,successtimes,bossaction,bossaction_timeout
     
     if flag==0:
         attTimeout=int(time.time())+2
@@ -2181,6 +2224,8 @@ def intro6():
         if bossflag ==0:
             attType=random.randint(1,4)
             if attType==3 or attType==4:
+                bossaction=attType
+                bossaction_timeout=int(time.time())+1
                 attTimeout=int(time.time())+1.5
             elif attType == 1 or attType == 2:
                 attType=5
@@ -2207,6 +2252,7 @@ def intro6():
             image2=pygame.image.load("./image/success.png")
             mainWindows.blit(image2,[400+j*150,100])
         if successtimes<3:
+            drawbossaction(bossaction)
             drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
             drawUser(useraction)
             pygame.draw.rect(mainWindows,(255,255,255),(10,+((100-defence)*surface[0]*0.3/100)+surface[1]*0.1,20,defence*surface[0]*0.3/100))
@@ -2250,6 +2296,8 @@ def intro6():
             if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
             if(attTimeout2!=0):drawAttType2()
         elif (successtimes<=3) and zone==5:
+            bossaction=5
+            bossaction_timeout=int(time.time())+1
             all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
             hand_left_nodes.clear()
             hand_right_nodes.clear() 
@@ -2337,72 +2385,27 @@ def intro6():
                         break
                 all_nodes.clear()
             elif(attType==3) and hitflag==0:
+                bossaction=0
                 if jump_effect_time<int(time.time()):
                     defencefunc()
                     hitflag=1
                 all_nodes.clear()
             elif(attType==4) and hitflag==0:
+                bossaction=0
                 if thigh_effect_time<int(time.time()):
                     defencefunc()
                     hitflag=1
                 all_nodes.clear()
             elif(attType==5) and hitflag==0:
+                bossaction=5
+                bossaction_timeout=int(time.time())+1
                 if zone!=5:
-                    if (0 in selected):
+                    for j in range(len(selected)):
                         for i in range(len(all_nodes)):
-                            if all_nodes[i][0]<surface[0]/5 :
+                            if(all_nodes[i][0]>selected[j]*surface[0]/5 and all_nodes[i][0]<(selected[j]+1)*surface[0]/5):
                                 defencefunc()
                                 hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if userposition[0]<surface[0]/5:
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (1 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<2*surface[0]/5 and all_nodes[i][0]> surface[0]/5) :
-                                defencefunc()
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<2*surface[0]/5 and userposition[0]>surface[0]/5) or(userposition[0]+surface[0]/8>surface[0]/5 and userposition[0]+surface[0]/8<2*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (2 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<3*surface[0]/5 and all_nodes[i][0]> 2*surface[0]/5) :
-                                defencefunc()
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<3*surface[0]/5 and userposition[0]>2*surface[0]/5) or(userposition[0]+surface[0]/8>2*surface[0]/5 and userposition[0]+surface[0]/8<3*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (3 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]<4*surface[0]/5 and all_nodes[i][0]> 3*surface[0]/5) :
-                                defencefunc()
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if (userposition[0]<4*surface[0]/5 and userposition[0]>3*surface[0]/5) or(userposition[0]+surface[0]/8>3*surface[0]/5 and userposition[0]+surface[0]/8<4*surface[0]/5):
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
-                    if (4 in selected):
-                        for i in range(len(all_nodes)):
-                            if (all_nodes[i][0]>4*surface[0]/5) :
-                                defencefunc()
-                                hitflag=1
-                                break
-                        
-                        all_nodes.clear() 
-                        # if userposition[0]+surface[0]/8>surface[0]*4/5:
-                        #     life-=1
-                        #     usercolor=(255,0,0) 
+                    all_nodes.clear() 
                 else:
                     if(selected[4]==0 and hitflag==0):
                         for i in range(len(all_nodes)):
@@ -2457,7 +2460,8 @@ def intro6():
             
         if actiontimeout <= int(time.time()):    
             useraction=0
-
+        if bossaction_timeout<=int(time.time()):
+            bossaction=0
         if waittimeout == int(time.time()):
             hitflag=0
             waittimeout=0
