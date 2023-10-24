@@ -803,7 +803,7 @@ def level3():
             attTimeout=int(time.time())+3.0
             zone=random.randint(1,5)
             #print(zone)
-            zone=5
+            
             selected=random.sample(range(0,5),zone)
             if zone==5:
                 attTimeout2=int(time.time())+4
@@ -1726,7 +1726,9 @@ def intro2():
                 flag=0
                 return
         if attTimeout!=int(time.time()) and (successtimes<=3):  #boss攻擊時間未結束 and 遊戲未結束
-            
+            hand_left_nodes.clear()
+            hand_right_nodes.clear() 
+            body_nodes.clear() 
             timepass=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass>attTimeout-recordtime):timepass=attTimeout-recordtime #如果大於timeout就設成timeout
             drawAttType(attType)
@@ -2121,6 +2123,9 @@ def intro5():
 
 
                     all_nodes.clear() 
+
+
+                    all_nodes.clear() 
                     if hitflag==0:successtimes+=1
                 elif zone==5:
                     if(selected[4]==0 and hitflag==0):
@@ -2178,6 +2183,9 @@ def intro5():
                         # if userposition[0]<surface[0]*4/5:
                         #     life-=1
                         #     usercolor=(255,0,0)
+            hand_left_nodes.clear()
+            hand_right_nodes.clear() 
+            body_nodes.clear() 
             hand_left_nodes.clear()
             hand_right_nodes.clear() 
             body_nodes.clear() 
@@ -2405,6 +2413,7 @@ def intro6():
                             if(all_nodes[i][0]>selected[j]*surface[0]/5 and all_nodes[i][0]<(selected[j]+1)*surface[0]/5):
                                 defencefunc()
                                 hitflag=1
+                    all_nodes.clear() 
                     all_nodes.clear() 
                 else:
                     if(selected[4]==0 and hitflag==0):
@@ -2957,8 +2966,8 @@ if __name__ == '__main__':
                 hand_left_nodes.append([(surface[0] - xPos),(yPos/3)+300])
                 left_handF_mouse_points.append((surface[0] - xPos,yPos))
             if left_handF_points:
-                mouse_x =  surface[0] - left_handF_points[8][0]
-                mouse_y =  left_handF_points[8][1]
+                # mouse_x =  surface[0] - left_handF_points[8][0]
+                # mouse_y =  left_handF_points[8][1]
                 finger_angle = hand_angle(left_handF_points)
                 fist_left_flag,mousecontrol_flag = hand_pos(finger_angle)  
 
@@ -3017,8 +3026,8 @@ if __name__ == '__main__':
             # 開啟視窗
         cv2.imshow('img',img)
             # 結束條件
-        if cv2.waitKey(1) == ord('q'):
-            break
+        # if cv2.waitKey(1) == ord('q'):
+        #     break
         if mousecontrol_flag == 0 and fist_left_flag == 0 and flag!=1:                    
             pygame.mouse.set_pos(mouse_x,mouse_y)
             mousecontrol_break = 0
@@ -3058,6 +3067,7 @@ if __name__ == '__main__':
                     colortimeout=int(time.time())+0.5
                     actiontimeout=int(time.time()+1)
                 if event.key ==pygame.K_SPACE:
+                    successtimes+=1
                     life-=1
                     if life<=0:
                         flag=0
