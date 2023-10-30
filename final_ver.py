@@ -456,7 +456,9 @@ def drawUser(x):
     elif(x==2):
         mainWindows.blit(leftPunch,[surface[0]/4,surface[1]/2]) 
         if (currentScene == "level4" or currentScene == "level3"):mainWindows.blit(punch,[surface[0]/4-rightPunch.get_width(),surface[1]/2-punch.get_height()]) 
-        else:mainWindows.blit(punch3,[surface[0]/4-rightPunch.get_width(),surface[1]/2-punch3.get_height()])    
+        else:mainWindows.blit(punch3,[surface[0]/4-rightPunch.get_width(),surface[1]/2-punch3.get_height()])  
+
+    else:return  
 
 def drawbossaction(x):
     if x==1:mainWindows.blit(bang,[surface[0]/4-bang.get_width()/2,0+bang.get_height()/2])
@@ -1513,7 +1515,7 @@ def level4():
     usermove()
 
 def intro1():
-    global successtimes,currentScene,visibility,flag
+    global successtimes,currentScene,visibility,flag,actiontimeout,useraction
     if flag==0:
         text=pygame.font.SysFont(None,60+(int((surface[0]-600)/25)))
         startText=text.render("Got it!",True,(255,255,255))
@@ -1561,6 +1563,7 @@ def intro1():
                 currentScene="optional"
                 flag=0
                 return
+        if actiontimeout<=int(time.time()):useraction=0
         
 
 def intro2():
