@@ -12,7 +12,6 @@ holistic = mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confid
 pTime = 0
 cTime = 0
 
-
 hand_text = ''
 # 初始化Pygame
 pygame.init()
@@ -79,15 +78,11 @@ def hand_pos(finger_angle):
     f3 = finger_angle[2]   # 中指角度
     f4 = finger_angle[3]   # 無名指角度
     f5 = finger_angle[4]   # 小拇指角度
-    mousecontrol_flag = 0
-    # 小於 50 表示手指伸直，大於等於 50 表示手指捲縮
-    if f3>=50 and f4>=50 and f5>=50:
-        mousecontrol_flag = 0        
-    elif f4>=50 and f5>=50:#食指跟大拇指伸直
-        mousecontrol_flag = 1  
-    else:
-        mousecontrol_flag = -1 
-
+    mousecontrol_flag = -1
+    if f2 <= 50: #食指伸直
+        mousecontrol_flag = 0
+    if f2<=50 and f3<=50: #食指跟大拇指伸直
+        mousecontrol_flag = 1 
     return mousecontrol_flag
 if __name__ == '__main__':
     # 讀取攝影鏡頭
@@ -106,9 +101,10 @@ if __name__ == '__main__':
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         holistic_result = holistic.process(imgRGB)
-        hand_left_landmarks = holistic_result.left_hand_landmarks
+        
         mousecontrol_flag = -1
         mouse_x,mouse_y = 0,0
+        hand_left_landmarks = holistic_result.left_hand_landmarks
         if hand_left_landmarks:
             # 找出左手的線跟點
             mp_Draw.draw_landmarks(img,hand_left_landmarks,mp_holistic.HAND_CONNECTIONS)
@@ -116,17 +112,26 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(hand_left_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 hand_left_nodes.append([xPos,yPos])
             
-            if hand_left_nodes:
-                mouse_x =  hand_left_nodes[8][0]
+        hand_right_landmarks = holistic_result.right_hand_landmarks
+        if hand_right_landmarks:
+            # 找出右手的線跟點
+            mp_Draw.draw_landmarks(img,hand_right_landmarks,mp_holistic.HAND_CONNECTIONS)
+            hand_right_nodes = []
+            for i,hand_point in enumerate(hand_right_landmarks.landmark):
+                xPos = int(hand_point.x*screen_width)
+                yPos = int(hand_point.y*screen_height)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                hand_right_nodes.append([xPos,yPos])
+            
+            if hand_right_nodes:
+                mouse_x =  hand_right_nodes[8][0]
                 mouse_x = screen_width - mouse_x
-                mouse_y =  hand_left_nodes[8][1]
-                #print(mouse_x,mouse_y)       
-                ha_angle = hand_angle(hand_left_nodes)
-                mousecontrol_flag = hand_pos(ha_angle)
-        
+                mouse_y =  hand_right_nodes[8][1]     
+                ha_angle = hand_angle(hand_right_nodes)
+                mousecontrol_flag = hand_pos(ha_angle)        
         img = cv2.flip(img, 1)  
         cv2.putText(img,hand_text, (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字                  
         cv2.imshow("WebCam", img)
@@ -142,7 +147,6 @@ if __name__ == '__main__':
         if mousecontrol_flag == 1 and mousecontrol_break == 0:
             pyautogui.click()
             mousecontrol_break = 1
-            
         
         # 檢查事件
         for event in pygame.event.get():    
