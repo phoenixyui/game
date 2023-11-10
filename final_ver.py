@@ -235,7 +235,7 @@ def optional():
                 windowssize(2)
                 currentScene="ready"
                 tempScene="intro2"
-        if(x>=surface[0]*2/3):
+        if(x>=surface[0]*2/3 and y>surface[1]*0.025+returnText.get_height()):
             mainWindows.blit(introduce3,[0,0])
             if event.type == pygame.MOUSEBUTTONUP and currentClick[2]=="optional":
                 windowssize(2)
@@ -260,11 +260,11 @@ def optional():
                 windowssize(2)
                 currentScene="ready"
                 tempScene="intro6"
-    mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
+    mainWindows.blit(returnText,(surface[0]*0.75,surface[1]*0.025))
     mainWindows.blit(mouseImage,[x,y])
-    if(x>=surface[0]*0.05 and x<=surface[0]*0.05+returnText.get_width() and y>= surface[1]*0.9-5 and y<= surface[1]*0.9+returnText.get_height()):
+    if(x>=surface[0]*0.75 -10 and x<=surface[0]*0.75+returnText.get_width() and y>= surface[1]*0.025-5 and y<= surface[1]*0.025+returnText.get_height()):
         returnText=opFont.render("return",True,(255,0,0))
-        mainWindows.blit(returnText,(surface[0]*0.05,surface[1]*0.9))
+        mainWindows.blit(returnText,(surface[0]*0.75,surface[1]*0.025))
         if event.type == pygame.MOUSEBUTTONUP:
             windowssize(1)
             currentScene="menu"
@@ -2321,7 +2321,7 @@ def ready():
         if i>200:
             color_flag=0
             break
-        if all_node[i][1]<surface[1]*0.3 or all_node[i][0]>surface[0]/2:
+        if all_node[i][1]<surface[1]*0.3 or all_node[i][0]<surface[0]/4 or all_node[i][0]> surface[0]*3/4:
             color_flag=0
             waittimeout=0
             break
@@ -2353,7 +2353,7 @@ def ready():
         successtimes=0
         currentScene=tempScene
 
-    pygame.draw.rect(mainWindows, (a_color,b_color,c_color), (0,surface[1]*0.3,surface[0]/2,surface[1]*0.7),5)  # 最後一個參數是外框寬度
+    pygame.draw.rect(mainWindows, (a_color,b_color,c_color), (surface[0]/4,surface[1]*0.3,surface[0]/2,surface[1]*0.7),5)  # 最後一個參數是外框寬度
     hand_left_nodes.clear()
     hand_right_nodes.clear() 
     body_nodes.clear() 
