@@ -25,9 +25,11 @@ punch_right_flag = 0
 armpit_left_flag = 0
 armpit_right_flag = 0
 
-p11 = [0,0]
+P11 = [0,0]
+P12 = [0,0]
+p13 = [0,0]
 p15 = [0,0]
-p12 = [0,0]
+p14 = [0,0]
 p16 = [0,0]
 
 # 顯示FPS
@@ -183,7 +185,7 @@ if __name__ == '__main__':
                 if i == 16: p16 = [xPos,yPos]
             if body_points:
                 ar_angle = arm_angle(body_points) # 計算手指角度，回傳長度為 5 的串列
-                arm_left_flag,arm_right_flag = arm_pos(ar_angle) # 取得手勢所回傳的內容
+                punch_arm_left_flag,punch_arm_right_flag = arm_pos(ar_angle) # 取得手勢所回傳的內容
                 armp_angle = armpit_angle(body_points)
                 armpit_left_flag,armpit_right_flag = armpit_pos(armp_angle)            
         # 獲取左手節點
@@ -216,29 +218,43 @@ if __name__ == '__main__':
             if right_handF_points:
                finger_angle = hand_angle(right_handF_points)
                fist_right_flag = hand_pos(finger_angle)       
-
+        if body_landmarks:
+            mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
+            body_points = []
+            # 印出點的數字
+            for i,lm in enumerate(body_landmarks.landmark):
+                xPos = int(lm.x*screen_width)
+                yPos = int(lm.y*screen_height)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                body_points.append((xPos,yPos))   
+                if i == 11: p11 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]                
+                if i == 13: p13 = [xPos,yPos]
+                if i == 15: p15 = [xPos,yPos]
+                if i == 14: p14 = [xPos,yPos]
+                if i == 16: p16 = [xPos,yPos]
         # 前置動作 如果已經有握拳跟手有收縮        
-        if(fist_left_flag and arm_left_flag and armpit_left_flag): 
+        if(fist_left_flag and punch_arm_left_flag and armpit_left_flag and p13[0] > p11[0] and p13[1] > p11[1] and p15[0] < p13[0] and p15[1] < p13[1] and p11[1] < p15[1]): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
+        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p13[1] > p11[1] and p13[0] < p11[0] and p15[0] < p13[0] and p15[1] < p13[1]):
             punch_left_flag += 1
             step_left_flag = 0
-            
+        elif(step_left_flag and (p13[0] < p11[0] or p15[0] > p13[0] or p15[1] > p13[1] or p13[1] < p11[1] or fist_left_flag == 0 or armpit_left_flag == 0)): step_left_flag = 0    
         # 前置動作 如果已經有握拳跟手有收縮         
-        if(fist_right_flag and arm_right_flag and armpit_right_flag): 
+        if(fist_right_flag and punch_arm_right_flag and armpit_right_flag and p14[0] < p12[0] and p14[1] > p12[1] and p16[0] > p14[0] and p16[1] < p14[1] and p12[1] < p16[1]): 
             step_right_flag = 1 
-            
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
+        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p14[1] > p12[1] and p14[0] > p12[0] and p16[0] > p14[0] and p16[1] < p14[1]):
             punch_right_flag += 1 
-            step_right_flag = 0
+            step_right_flag = 0   
+        elif(step_right_flag and (p14[0] > p12[0] or p16[0] < p14[0] or p16[1] > p14[1] or p14[1] < p12[1] or fist_right_flag == 0 or armpit_right_flag == 0)): step_right_flag = 0
         # 反轉
         img = cv2.flip(img,1)
-        cv2.putText(img,'fist: ' + str(fist_left_flag) + ',' + str(fist_right_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
-        cv2.putText(img,'arm: ' + str(arm_left_flag) + ',' + str(arm_right_flag), (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'armpit: ' + str(armpit_left_flag) + ',' + str(armpit_right_flag), (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'punch count: ' + str(punch_left_flag) + ',' + str(punch_right_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'fist(left,right): ' + str(fist_left_flag) + ',' + str(fist_right_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
+        cv2.putText(img,'arm(left,right): ' + str(arm_left_flag) + ',' + str(arm_right_flag), (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'armpit(left,right): ' + str(armpit_left_flag) + ',' + str(armpit_right_flag), (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'punch count(left,right): ' + str(punch_left_flag) + ',' + str(punch_right_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
                 
         # 顯示FPS
         showFps(img)

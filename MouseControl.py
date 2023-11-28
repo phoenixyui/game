@@ -147,6 +147,7 @@ if __name__ == '__main__':
         if mousecontrol_flag == 1 and mousecontrol_break == 0:
             pyautogui.click()
             mousecontrol_break = 1
+            
         
         # 檢查事件
         for event in pygame.event.get():    

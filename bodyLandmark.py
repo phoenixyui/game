@@ -9,8 +9,8 @@ mp_drawing_styles = mp.solutions.drawing_styles # mediapipe 繪圖樣式
 mp_holistic = mp.solutions.holistic # mediapipe 全身偵測方法
 holistic = mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0.5) 
 
-screen_width = 800
-screen_height = 600
+screen_width = 1200
+screen_height = 720
 # 初始化Pygame
 
 pygame.init()
@@ -60,42 +60,42 @@ def drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes):
     # 繪出左手的節點到pygame
     for i in range(len(hand_left_nodes)):
         pygame.draw.circle(screen, red, (int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),ball_radius)
-    #     if(i==0):
-    #         pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1]))) 
-    #         pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1]))) 
-    #         pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1]))) 
-    #     if(i == 5 or i == 9 or i == 13):
-    #         pygame.draw.line(screen,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1]))) 
-    #     if(i%4 != 0 and i < len(hand_left_nodes)-1):
-    #         pygame.draw.line(screen,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1]))) 
+        if(i==0):
+            pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1]))) 
+            pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1]))) 
+            pygame.draw.line(screen,red,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1]))) 
+        if(i == 5 or i == 9 or i == 13):
+            pygame.draw.line(screen,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1]))) 
+        if(i%4 != 0 and i < len(hand_left_nodes)-1):
+            pygame.draw.line(screen,red,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1]))) 
     hand_left_nodes.clear()    
     # 繪出右手的節點到pygame
-    # for i in range(len(hand_right_nodes)):
-    #     pygame.draw.circle(screen, red, (int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])), ball_radius)
-    #     if(i==0):
-    #         pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1]))) 
-    #         pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1]))) 
-    #         pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1]))) 
-    #     if(i == 5 or i == 9 or i == 13):
-    #         pygame.draw.line(screen,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1]))) 
-    #     if(i%4 != 0 and i < len(hand_right_nodes)-1):
-    #         pygame.draw.line(screen,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1]))) 
-    # hand_right_nodes.clear()  
+    for i in range(len(hand_right_nodes)):
+        pygame.draw.circle(screen, red, (int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])), ball_radius)
+        if(i==0):
+            pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1]))) 
+            pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1]))) 
+            pygame.draw.line(screen,red,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1]))) 
+        if(i == 5 or i == 9 or i == 13):
+            pygame.draw.line(screen,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1]))) 
+        if(i%4 != 0 and i < len(hand_right_nodes)-1):
+            pygame.draw.line(screen,red,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1]))) 
+    hand_right_nodes.clear()  
     # 繪出身體的節點到pygame
-    # for i in range(len(body_nodes)):
-    #     pygame.draw.circle(screen, red, (int(body_nodes[i][0]),int(body_nodes[i][1])), ball_radius)
-    #     #if((i >= 11 and i <= 14) or (i >= 23 and i <= 26)):
-    #     if((i >= 23 and i <= 26)):
-    #         pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1]))) 
-    #     if(i == 11 or i == 23):
-    #         pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1]))) 
-    #     if(i == 11 or i == 12):
-    #         pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1]))) 
-    #     if(i >= 27 and i <=30):
-    #         pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])))
-    #     if(i == 28 or i == 27):
-    #         pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])))
-    # body_nodes.clear()
+    for i in range(len(body_nodes)):
+        pygame.draw.circle(screen, red, (int(body_nodes[i][0]),int(body_nodes[i][1])),ball_radius)
+        if((i >= 11 and i <= 14) or (i >= 23 and i <= 26)):
+        # if((i >= 23 and i <= 26)):
+            pygame.draw.line(screen,(255,255,255),(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1]))) 
+        if(i == 11 or i == 23):
+            pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1]))) 
+        if(i == 11 or i == 12):
+            pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1]))) 
+        if(i >= 27 and i <=30):
+            pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])))
+        if(i == 28 or i == 27):
+            pygame.draw.line(screen,red,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])))
+    body_nodes.clear()
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
@@ -117,16 +117,16 @@ if __name__ == '__main__':
         # 獲取身體節點的位置
         body_landmarks = holistic_result.pose_landmarks
 
-        # # 如果有偵測到身體節點
-        # if body_landmarks:
-        #     mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
+        # 如果有偵測到身體節點
+        if body_landmarks:
+            mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
 
-        #     # 印出點的數字
-        #     for i,lm in enumerate(body_landmarks.landmark):
-        #         xPos = int(lm.x*screen_width)
-        #         yPos = int(lm.y*screen_height)
-        #         cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
-        #         body_nodes.append([(screen_width - xPos),(yPos/3)+300])
+            # 印出點的數字
+            for i,lm in enumerate(body_landmarks.landmark):
+                xPos = int(lm.x*screen_width)
+                yPos = int(lm.y*screen_height)
+                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                body_nodes.append([(screen_width - xPos),(yPos/3)+300])
 
            
         # 獲取左手節點
@@ -141,33 +141,21 @@ if __name__ == '__main__':
                 # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 
                 left_handF_points.append([xPos,yPos])  
-                x = int(abs(hand_point.z*100))
-                # x=1     
-                # if i == 4:
-                #     x = int(abs(hand_point.z*100))
-                #     # print(x)
-                # # hand_left_nodes.append([(screen_width - xPos),(yPos/3)+300])
-                
-                if(x<3):x=1
-                else: x = x*2
-                
-                print(x,xPos/x,yPos/x)
-                hand_left_nodes.append([(screen_width-xPos/(x)),(yPos/(x))])
-
+                hand_left_nodes.append([(screen_width - xPos),(yPos/3)+300])
 
         # 獲取右手節點    
-        # right_hand_landmarks = holistic_result.right_hand_landmarks
-        # # 如果有偵測的右手節點        
+        right_hand_landmarks = holistic_result.right_hand_landmarks
+        # 如果有偵測的右手節點        
         
-        # if right_hand_landmarks:
-        #     mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
-        #     right_handF_points = []
-        #     for i,hand_point in enumerate(right_hand_landmarks.landmark):
-        #         xPos = int(hand_point.x*screen_width)
-        #         yPos = int(hand_point.y*screen_height)
-        #         # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
-        #         right_handF_points.append((xPos,yPos))
-        #         hand_right_nodes.append([(screen_width - xPos),(yPos/3)+300])
+        if right_hand_landmarks:
+            mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
+            right_handF_points = []
+            for i,hand_point in enumerate(right_hand_landmarks.landmark):
+                xPos = int(hand_point.x*screen_width)
+                yPos = int(hand_point.y*screen_height)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                right_handF_points.append((xPos,yPos))
+                hand_right_nodes.append([(screen_width - xPos),(yPos/3)+300])
         
         # 反轉
         img = cv2.flip(img,1)

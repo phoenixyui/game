@@ -44,8 +44,8 @@ def thigh_angle(thigh_):
 def thigh_pos(thigh_angle):
     t1 = thigh_angle[0]
     t2 = thigh_angle[1]
-    # 雙腳都要大於50
-    if t1 > 50 and t2 > 50:
+    # 雙腳都要小於160
+    if t1 > 20 and t2 > 20:
         thigh_flag = 1
     else: 
         thigh_flag = 0
@@ -89,7 +89,6 @@ if __name__ == '__main__':
                 thigh_flag = thigh_pos(th_angle)
                        
         img = cv2.flip(img,1)
-        print(thigh_flag)
         cv2.putText(img,"thigh: " + str(thigh_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         # 顯示FPS
         showFps(img)

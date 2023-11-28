@@ -9,8 +9,8 @@ mp_drawing_styles = mp.solutions.drawing_styles # mediapipe 繪圖樣式
 mp_holistic = mp.solutions.holistic # mediapipe 全身偵測方法
 holistic = mp_holistic.Holistic(min_detection_confidence=0.5,min_tracking_confidence=0.5) 
 
-screen_width = 800
-screen_height = 600
+screen_width = 1200
+screen_height = 900
 # 初始化Pygame
 
 pygame.init()
@@ -43,10 +43,13 @@ armpit_left_flag = 0
 armpit_right_flag = 0
 step_left_flag = 0
 step_right_flag = 0
-p11 = [0,0]
+P11 = [0,0]
+P12 = [0,0]
+p13 = [0,0]
 p15 = [0,0]
-p12 = [0,0]
+p14 = [0,0]
 p16 = [0,0]
+
 #####SQUATDOWN#####
 thigh_flag = 0
 #####JUMP#####
@@ -219,8 +222,8 @@ def thigh_angle(thigh_):
 def thigh_pos(thigh_angle):
     t1 = thigh_angle[0]
     t2 = thigh_angle[1]
-    # 雙腳都要大於50
-    if t1 > 50 and t2 > 50:
+    # 雙腳角度都要小於160
+    if t1 > 20 and t2 > 20:
         thigh_flag = 1
     else: 
         thigh_flag = 0
@@ -288,7 +291,6 @@ if __name__ == '__main__':
         # 如果有偵測到身體節點
         if body_landmarks:
             mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
-
             body_points = []
             # 印出點的數字
             for i,lm in enumerate(body_landmarks.landmark):
@@ -298,8 +300,10 @@ if __name__ == '__main__':
                 body_points.append((xPos,yPos))   
                 body_nodes.append([(screen_width - xPos),(yPos/3)+300])
                 if i == 11: p11 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]                
+                if i == 13: p13 = [xPos,yPos]
                 if i == 15: p15 = [xPos,yPos]
-                if i == 12: p12 = [xPos,yPos]
+                if i == 14: p14 = [xPos,yPos]
                 if i == 16: p16 = [xPos,yPos]
             if body_points:
                 # 肩膀角度
@@ -349,26 +353,27 @@ if __name__ == '__main__':
                finger_angle = hand_angle(right_handF_points)
                fist_right_flag = hand_pos(finger_angle)       
 
-        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag):
+        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag and p16[1] < p12[1] and p15[1] < p11[1]):
             defense_flag = 1
         else:
             defense_flag = 0
+
         # 前置動作 如果已經有握拳跟手有收縮        
-        if(fist_left_flag and punch_arm_left_flag and armpit_left_flag): 
+        if(fist_left_flag and punch_arm_left_flag and armpit_left_flag and p13[0] > p11[0] and p13[1] > p11[1] and p15[0] < p13[0] and p15[1] < p13[1] and p11[1] < p15[1]): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
+        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p13[1] > p11[1] and p13[0] < p11[0] and p15[0] < p13[0] and p15[1] < p13[1]):
             punch_left_flag += 1
             step_left_flag = 0
-            
+        elif(step_left_flag and (p13[0] < p11[0] or p15[0] > p13[0] or p15[1] > p13[1] or p13[1] < p11[1] or fist_left_flag == 0 or armpit_left_flag == 0)): step_left_flag = 0    
         # 前置動作 如果已經有握拳跟手有收縮         
-        if(fist_right_flag and punch_arm_right_flag and armpit_right_flag): 
+        if(fist_right_flag and punch_arm_right_flag and armpit_right_flag and p14[0] < p12[0] and p14[1] > p12[1] and p16[0] > p14[0] and p16[1] < p14[1] and p12[1] < p16[1]): 
             step_right_flag = 1 
-            
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
+        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p14[1] > p12[1] and p14[0] > p12[0] and p16[0] > p14[0] and p16[1] < p14[1]):
             punch_right_flag += 1 
-            step_right_flag = 0
+            step_right_flag = 0   
+        elif(step_right_flag and (p14[0] > p12[0] or p16[0] < p14[0] or p16[1] > p14[1] or p14[1] < p12[1] or fist_right_flag == 0 or armpit_right_flag == 0)): step_right_flag = 0
         # 反轉
         img = cv2.flip(img,1)
         cv2.putText(img,"fist: " + str(fist_left_flag) + ',' + str(fist_right_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
@@ -379,7 +384,7 @@ if __name__ == '__main__':
         cv2.putText(img,'shoulder: ' + str(shoulder_left_flag) + ',' + str(shoulder_right_flag), (30,230),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"defense_flag: " + str(defense_flag), (30,260),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         cv2.putText(img,"thigh: " + str(thigh_flag), (30,290),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-
+        cv2.putText(img,"flagggg: " + str(step_left_flag), (30,320),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
         # 顯示FPS
         showFps(img)
         # 開啟視窗

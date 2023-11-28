@@ -21,7 +21,12 @@ shoulder_left_flag = 0
 shoulder_right_flag = 0
 fist_left_flag = 0
 fist_right_flag = 0
-
+P11 = [0,0]
+P12 = [0,0]
+p13 = [0,0]
+p15 = [0,0]
+p14 = [0,0]
+p16 = [0,0]
 # 顯示FPS
 def showFps(img):
     global cTime,pTime
@@ -172,7 +177,7 @@ if __name__ == '__main__':
             for i,lm in enumerate(body_landmarks.landmark):
                 xPos = int(lm.x*screen_width)
                 yPos = int(lm.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
                 arm_points.append((xPos,yPos))
                 shoulder_points.append((xPos,yPos))
             
@@ -195,7 +200,7 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(left_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 left_handF_points.append((xPos,yPos))       
             if left_handF_points:
                finger_angle = hand_angle(left_handF_points)
@@ -211,26 +216,37 @@ if __name__ == '__main__':
             for i,hand_point in enumerate(right_hand_landmarks.landmark):
                 xPos = int(hand_point.x*screen_width)
                 yPos = int(hand_point.y*screen_height)
-                cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,255,0),2)
                 right_handF_points.append((xPos,yPos))
             
             if right_handF_points:
                finger_angle = hand_angle(right_handF_points)
                fist_right_flag = hand_pos(finger_angle)       
-
-        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and arm_left_flag and arm_right_flag):
+        if body_landmarks:
+            mp_Draw.draw_landmarks(img,body_landmarks,mp_holistic.POSE_CONNECTIONS)
+            body_points = []
+            # 印出點的數字
+            for i,lm in enumerate(body_landmarks.landmark):
+                xPos = int(lm.x*screen_width)
+                yPos = int(lm.y*screen_height)
+                # cv2.putText(img,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)
+                body_points.append((xPos,yPos))   
+                if i == 11: p11 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]                
+                if i == 13: p13 = [xPos,yPos]
+                if i == 15: p15 = [xPos,yPos]
+                if i == 14: p14 = [xPos,yPos]
+                if i == 16: p16 = [xPos,yPos]
+        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and arm_left_flag and arm_right_flag and p16[1] < p12[1] and p15[1] < p11[1]):
             defense_flag = 1
         else:
             defense_flag = 0
         # 反轉
         img = cv2.flip(img,1)
-        cv2.putText(img,"fist_left_flag: " + str(fist_left_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
-        cv2.putText(img,"fist_right_flag: " + str(fist_right_flag), (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'arm_left_flag: ' + str(arm_left_flag), (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'arm_right_flag: ' + str(arm_right_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'shoulder_flag_flag: ' + str(shoulder_left_flag), (30,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,'shoulder_right_flag: ' + str(shoulder_right_flag), (30,230),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
-        cv2.putText(img,"defense_flag: " + str(defense_flag), (30,290),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,"fist(left,right): " + str(fist_left_flag) + ',' + str(fist_right_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
+        cv2.putText(img,'arm(left,right): ' + str(arm_left_flag) + ',' + str(arm_right_flag), (30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'shoulder(left,right): ' + str(shoulder_left_flag) + ',' + str(shoulder_right_flag), (30,140),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
+        cv2.putText(img,'defense: ' + str(defense_flag), (30,170),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字
     
         # 顯示FPS
         showFps(img)
