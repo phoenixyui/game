@@ -40,8 +40,10 @@ armpit_left_flag = 0
 armpit_right_flag = 0
 step_left_flag = 0
 step_right_flag = 0
-p11 = [0,0]
-p12 = [0,0]
+P11 = [0,0]
+P12 = [0,0]
+p13 = [0,0]
+p14 = [0,0]
 p15 = [0,0]
 p16 = [0,0]
 #####SQUATDOWN#####
@@ -128,7 +130,7 @@ hit_flag=0
 
 
 if user==1:
-    leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_left-1.jpg")
+    leftPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game\\image\\punch_left-1.jpg")
     rightPunch=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\punch_right-1.jpg")
     introduce0=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce0.png").convert()
     introduce1=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\introduce1.png").convert()
@@ -197,7 +199,7 @@ def Menu():
     mainWindows.blit(mouseImage,[x,y])
 
 
-    if(x>=surface[0]/2 and y>=0 and y<=surface[1]/4):
+    if(x>=surface[0]/2 and y>=surface[1]*0.15 and y<=surface[1]/4):
         pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*2/4+startText.get_width()/2,surface[1]/6,300,66),width=1,border_radius=3)
         if event.type == pygame.MOUSEBUTTONUP:
             windowssize(1)
@@ -315,12 +317,12 @@ def initlife(x):
     # 上面的userposition可以刪掉或改成使用者目前位置
     ###
     if x==1:
-        bosslife = 100
+        bosslife = 50
     elif x==2:
-        bosslife = 150
+        bosslife = 50
     elif x==3:
-        bosslife = 150
-    elif x==4:bosslife = 150
+        bosslife = 50
+    elif x==4:bosslife = 50
         
 def usermove():
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility,gflag,timepass,recordtime
@@ -419,16 +421,17 @@ def drawAttType(x):
                 mainWindows.blit(secWindows,(multipleAttackZone[selected[i]],height))
                 pygame.draw.rect(mainWindows,(255,0,0),(multipleAttackZone[selected[i]],0,surface[0]/5,surface[1]),width=1,border_radius=3)
 
-def drawAttType2():
+def drawAttType2(x):
     global currentScene,bosslife,life,winflag,bossflag,flag,userposition,destination,distance,attTimeout,attType,waittimeout,height,gameovertimeout,visibility
     global gflag,timepass,recordtime,selected,zone,multipleAttackZone,attTimeout2,timepass2,height2
     secWindows = pygame.surface.Surface((surface[0],surface[1]), SRCALPHA, 32)  
     height2=surface[1]*(1-timepass2/(attTimeout2-recordtime))      
-    pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/5,surface[1]),border_radius=3)
-    mainWindows.blit(secWindows,(multipleAttackZone[selected[zone-1]],height2))
-    pygame.draw.rect(mainWindows,(255,0,0),(multipleAttackZone[selected[zone-1]],0,surface[0]/5,surface[1]),width=1,border_radius=3)       
+    if x==0:
+        pygame.draw.rect(secWindows,(200,0,0,50),(0,0,surface[0]/5,surface[1]),border_radius=3)
+        mainWindows.blit(secWindows,(multipleAttackZone[selected[zone-1]],height2))
+        pygame.draw.rect(mainWindows,(255,0,0),(multipleAttackZone[selected[zone-1]],0,surface[0]/5,surface[1]),width=1,border_radius=3) 
 
-def drawUser(x):
+def drawUser(x):    
     global usercolor,bosscolor,attack
 
     #boss
@@ -506,8 +509,8 @@ def level1():
         drawbossaction(bossaction)
         drawUser(useraction)
         drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes)
-        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))  
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))  
         for i in range (0,life):
             if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
@@ -656,8 +659,8 @@ def level2():
             if user==1:lifeImage=pygame.image.load("C:\\Users\\User\\Desktop\\media\\game-main\\image\\Unknown-4.png")
             elif user==2:lifeImage=pygame.image.load("./image/Unknown-4.png")
             mainWindows.blit(lifeImage,[50*i,0])
-        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
-        pygame.draw.rect(mainWindows,(255,255,255),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*0.2+(100-bosslife)*(surface[0]*0.3/100),surface[1]*0.05,bosslife*surface[0]*0.3/100,10))
+        pygame.draw.rect(mainWindows,(255,0,0),(surface[0]*0.5,surface[1]*0.05,bosslife*surface[0]*0.3/100,10))   
         ##顯示左上角愛心##
     if attTimeout!=round(time.time(),1) and (not(gflag)) and bosslife>0:  #boss攻擊時間未結束 and 遊戲未結束
         hand_left_nodes.clear()
@@ -837,8 +840,9 @@ def level3():
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
-        if(attTimeout2!=0):drawAttType2()
+        if(attTimeout2!=0):drawAttType2(0)
     elif (not(gflag)) and zone==5:
+        drawAttType2(1)
         bossaction=5
         bossaction_timeout=int(time.time())+1
         all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
@@ -936,7 +940,7 @@ def level3():
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
-        waittimeout=int(time.time())+1 #攻擊間隔
+        waittimeout=int(time.time())+4 #攻擊間隔
         timepass=0
         timepass2=0
 
@@ -1135,7 +1139,7 @@ def level3():
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
-        waittimeout=int(time.time())+2 #攻擊間隔
+        waittimeout=int(time.time())+4 #攻擊間隔
         timepass=0
         timepass2=0
     
@@ -1235,8 +1239,9 @@ def level4():
     if attTimeout2!=int(time.time()) and (not(gflag)) and zone==5 :
         timepass2=round(time.time(),2)-recordtime #計算經過的時間
         if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
-        if(attTimeout2!=0):drawAttType2()
+        if(attTimeout2!=0):drawAttType2(0)
     elif (not(gflag)) and zone==5:
+        drawAttType2(1)
         bossaction=5
         bossaction_timeout=int(time.time())+1
         all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
@@ -1324,7 +1329,7 @@ def level4():
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
-        waittimeout=int(time.time())+1 #攻擊間隔
+        waittimeout=int(time.time())+4 #攻擊間隔
         timepass=0
         timepass2=0
 
@@ -1496,7 +1501,7 @@ def level4():
                 currentScene="normalMode"
         #以上為勝利動畫
         attType=0
-        waittimeout=int(time.time())+2 #攻擊間隔
+        waittimeout=int(time.time())+4 #攻擊間隔
         timepass=0
         timepass2=0
     
@@ -1925,11 +1930,12 @@ def intro5():
         if attTimeout2!=int(time.time()) and (successtimes<=3) and zone==5:
             timepass2=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
-            if(attTimeout2!=0):drawAttType2()
+            if(attTimeout2!=0):drawAttType2(0)
         elif (successtimes<=3) and zone==5:
             all_nodes=hand_left_nodes+hand_right_nodes+body_nodes     
             bossaction=5
             bossaction_timeout=int(time.time())+1
+            drawAttType2(1)
             if (selected[4]==0 and hitflag==0):
                 for i in range(len(all_nodes)):
                     if all_nodes[i][0]<surface[0]/5 :
@@ -1977,7 +1983,7 @@ def intro5():
             body_nodes.clear()
             zone=0      
             attType=0
-            waittimeout=int(time.time())+2 #攻擊間隔
+            waittimeout=int(time.time())+4 #攻擊間隔
             timepass=0
             timepass2=0
 
@@ -2049,7 +2055,7 @@ def intro5():
             hand_right_nodes.clear() 
             body_nodes.clear() 
             attType=0
-            waittimeout=int(time.time())+2 #攻擊間隔
+            waittimeout=int(time.time())+4 #攻擊間隔
             timepass=0
             timepass2=0  
         if actiontimeout <= int(time.time()):    
@@ -2129,7 +2135,7 @@ def intro6():
                 pygame.draw.rect(secWindows,(0,0,0,visibility),(0,0,surface[0],surface[1]))
                 secWindows.blit(gameoverText,(surface[0]/2-gameoverText.get_width()/2,surface[1]/2-gameoverText.get_height()/2))
                 mainWindows.blit(secWindows,(0,0))
-                visibility+=1
+                visibility+=3
                 if visibility>=255:
                     visibility=255
             else:
@@ -2160,7 +2166,7 @@ def intro6():
         if attTimeout2!=int(time.time()) and (successtimes<=3) and zone==5:
             timepass2=round(time.time(),2)-recordtime #計算經過的時間
             if(timepass2>attTimeout2-recordtime):timepass2=attTimeout2-recordtime #如果大於timeout就設成timeout
-            if(attTimeout2!=0):drawAttType2()
+            if(attTimeout2!=0 and attTimeout2<int(time.time())):drawAttType2(0)
         elif (successtimes<=3) and zone==5:
             bossaction=5
             bossaction_timeout=int(time.time())+1
@@ -2168,6 +2174,7 @@ def intro6():
             hand_left_nodes.clear()
             hand_right_nodes.clear() 
             body_nodes.clear()   
+            drawAttType2(1)
             if (selected[4]==0 and hitflag==0):
                 for i in range(len(all_nodes)):
                     if all_nodes[i][0]<surface[0]/5 :
@@ -2206,7 +2213,7 @@ def intro6():
                 
                 zone=0
                 attType=0
-                waittimeout=int(time.time())+2 #攻擊間隔
+                waittimeout=int(time.time())+4 #攻擊間隔
                 timepass=0
                 timepass2=0
 
@@ -2253,12 +2260,13 @@ def intro6():
             elif(attType==5) and hitflag==0:
                 bossaction=5
                 bossaction_timeout=int(time.time())+1
-                if zone!=5:
+                if zone!=5 and hitflag==0:
                     for j in range(len(selected)):
                         for i in range(len(all_nodes)):
                             if(all_nodes[i][0]>selected[j]*surface[0]/5 and all_nodes[i][0]<(selected[j]+1)*surface[0]/5):
                                 defencefunc()
                                 hitflag=1
+                                break
                     all_nodes.clear() 
                 else:
                     if(selected[4]==0 and hitflag==0):
@@ -2297,7 +2305,7 @@ def intro6():
                                 break
                         all_nodes.clear()
             attType=0
-            waittimeout=int(time.time())+2 #攻擊間隔
+            waittimeout=int(time.time())+4 #攻擊間隔
             timepass=0
             
         if actiontimeout <= int(time.time()):    
@@ -2645,40 +2653,40 @@ def drawUserbody(hand_left_nodes,hand_right_nodes,body_nodes):
     for i in range(len(hand_left_nodes)):
         pygame.draw.circle(mainWindows, red, (int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])), ball_radius)
         if(i==0):
-            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1])),2) 
-            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1])),2) 
-            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[1][0]),int(hand_left_nodes[1][1])),3) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[5][0]),int(hand_left_nodes[5][1])),3) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[0][0]),int(hand_left_nodes[0][1])),(int(hand_left_nodes[17][0]),int(hand_left_nodes[17][1])),3) 
         if(i == 5 or i == 9 or i == 13):
-            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+4][0]),int(hand_left_nodes[i+4][1])),3) 
         if(i%4 != 0 and i < len(hand_left_nodes)-1):
-            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_left_nodes[i][0]),int(hand_left_nodes[i][1])),(int(hand_left_nodes[i+1][0]),int(hand_left_nodes[i+1][1])),3) 
     # hand_left_nodes.clear()  
     
 
     for i in range(len(hand_right_nodes)):
         pygame.draw.circle(mainWindows, red, (int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])), ball_radius)
         if(i==0):
-            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1])),2) 
-            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1])),2) 
-            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[1][0]),int(hand_right_nodes[1][1])),3) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[5][0]),int(hand_right_nodes[5][1])),3) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[0][0]),int(hand_right_nodes[0][1])),(int(hand_right_nodes[17][0]),int(hand_right_nodes[17][1])),3) 
         if(i == 5 or i == 9 or i == 13):
-            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+4][0]),int(hand_right_nodes[i+4][1])),3) 
         if(i%4 != 0 and i < len(hand_right_nodes)-1):
-            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(hand_right_nodes[i][0]),int(hand_right_nodes[i][1])),(int(hand_right_nodes[i+1][0]),int(hand_right_nodes[i+1][1])),3) 
     # hand_right_nodes.clear()  
 
     for i in range(len(body_nodes)):
         pygame.draw.circle(mainWindows, red, (int(body_nodes[i][0]),int(body_nodes[i][1])), ball_radius)
         if((i >= 11 and i <= 14) or (i >= 23 and i <= 26)):
-            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),3) 
         if(i == 11 or i == 23):
-            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+1][0]),int(body_nodes[i+1][1])),3) 
         if(i == 11 or i == 12):
-            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1])),2) 
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+12][0]),int(body_nodes[i+12][1])),3) 
         if(i >= 27 and i <=30):
-            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),2)
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+2][0]),int(body_nodes[i+2][1])),3)
         if(i == 28 or i == 27):
-            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])),2)
+            pygame.draw.line(mainWindows,user_color,(int(body_nodes[i][0]),int(body_nodes[i][1])),(int(body_nodes[i+4][0]),int(body_nodes[i+4][1])),3)
     # body_nodes.clear()
 
 # 顯示FPS
@@ -2726,8 +2734,10 @@ if __name__ == '__main__':
                 if i == 28: detect_point[2] = [(surface[0] - xPos),(yPos/3)+300]
                
                 if i == 11: p11 = [xPos,yPos]
+                if i == 12: p12 = [xPos,yPos]                
+                if i == 13: p13 = [xPos,yPos]
                 if i == 15: p15 = [xPos,yPos]
-                if i == 12: p12 = [xPos,yPos]
+                if i == 14: p14 = [xPos,yPos]
                 if i == 16: p16 = [xPos,yPos]
             if body_points:
                 # 肩膀角度
@@ -2754,7 +2764,7 @@ if __name__ == '__main__':
         left_hand_landmarks = holistic_result.left_hand_landmarks
         # 如果有偵測到左手節點
         mouse_x,mouse_y = 0,0
-        mousecontrol_flag = -1
+        mousecontrol_flag = -1 
         if left_hand_landmarks:
             mp_Draw.draw_landmarks(img,holistic_result.left_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
             left_handF_points = []
@@ -2767,15 +2777,13 @@ if __name__ == '__main__':
                 hand_left_nodes.append([(surface[0] - xPos),(yPos/3)+300])
                 left_handF_mouse_points.append((surface[0] - xPos,yPos))
             if left_handF_points:
-                # mouse_x =  surface[0] - left_handF_points[8][0]
-                # mouse_y =  left_handF_points[8][1]
                 finger_angle = hand_angle(left_handF_points)
-                fist_left_flag,mousecontrol_flag = hand_pos(finger_angle)  
+                fist_left_flag,temp = hand_pos(finger_angle)  
 
         # 獲取右手節點    
         right_hand_landmarks = holistic_result.right_hand_landmarks
         # 如果有偵測的右手節點        
-        
+       
         if right_hand_landmarks:
             mp_Draw.draw_landmarks(img,holistic_result.right_hand_landmarks,mp_holistic.HAND_CONNECTIONS)
             right_handF_points = []
@@ -2791,26 +2799,26 @@ if __name__ == '__main__':
                 finger_angle = hand_angle(right_handF_points)
                 fist_right_flag,mousecontrol_flag = hand_pos(finger_angle)       
 
-        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag):
+        if(fist_left_flag and fist_right_flag and shoulder_left_flag and shoulder_right_flag and defense_arm_left_flag and defense_arm_right_flag and p16[1] < p12[1] and p15[1] < p11[1]):
             defense_flag = 1
         else:
             defense_flag = 0
         # 前置動作 如果已經有握拳跟手有收縮        
-        if(fist_left_flag and punch_arm_left_flag and armpit_left_flag): 
+        if(fist_left_flag and punch_arm_left_flag and armpit_left_flag and p13[0] > p11[0] and p13[1] > p11[1] and p15[0] < p13[0] and p15[1] < p13[1] and p11[1] < p15[1]): 
             step_left_flag = 1
         # 左揮拳動作
-        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p15[0] < p11[0] and p15[1] + 50 > p11[1] and p15[1] - 50 < p11[1]):
-            punch_left_flag = 1
+        if(step_left_flag and fist_left_flag and not punch_arm_left_flag and p13[0] < p11[0] and p13[1] > p11[1] and p13[1] > p11[1] and p15[0] < p13[0] and p11[1] < p15[1]):
+            punch_left_flag += 1
             step_left_flag = 0
-            
+        elif(step_left_flag and (p15[0] > p13[0] or p15[1] > p13[1] or p13[1] < p11[1] or p15[1] < p11[1] or fist_left_flag == 0)): step_left_flag = 0    
         # 前置動作 如果已經有握拳跟手有收縮         
-        if(fist_right_flag and punch_arm_right_flag and armpit_right_flag): 
+        if(fist_right_flag and punch_arm_right_flag and armpit_right_flag and p14[0] < p12[0] and p14[1] > p12[1] and p16[0] > p14[0] and p16[1] < p14[1] and p12[1] < p16[1]): 
             step_right_flag = 1 
-            
         # 右揮拳動作
-        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p16[0] > p12[0] and p16[1] + 50 > p12[1] and p16[1] - 50 < p12[1]):
-            punch_right_flag = 1 
-            step_right_flag = 0
+        if(step_right_flag and fist_right_flag and not punch_arm_right_flag and p14[0] > p12[0] and p14[1] > p12[1] and p16[0] > p14[0] and p12[1] < p16[1]):
+            punch_right_flag += 1 
+            step_right_flag = 0   
+        elif(step_right_flag and (p16[0] < p14[0] or p16[1] > p14[1] or p14[1] < p12[1] or p16[1] < p12[1] or fist_right_flag == 0)): step_right_flag = 0
         # 反轉
         img = cv2.flip(img,1)
         cv2.putText(img,"fist: " + str(fist_left_flag) + ',' + str(fist_right_flag), (30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3) # 印出文字 
@@ -2829,10 +2837,10 @@ if __name__ == '__main__':
             # 結束條件
         # if cv2.waitKey(1) == ord('q'):
         #     break
-        if mousecontrol_flag == 0 and fist_left_flag == 0 and flag!=1:                    
+        if mousecontrol_flag == 0:                    
             pygame.mouse.set_pos(mouse_x,mouse_y)
             mousecontrol_break = 0
-        if mousecontrol_flag == 1 and mousecontrol_break == 0 and flag!=1:
+        if mousecontrol_flag == 1 and mousecontrol_break == 0 :
             pyautogui.click()
             mousecontrol_break = 1
         # 迭代整個事件迴圈，若有符合事件則對應處理
